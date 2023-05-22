@@ -1,5 +1,8 @@
 ## <a href="https://sites.google.com/view/foroestadisticaaplicada/p%C3%A1gina-principal?authuser=0">XII Foro Internacional de Estadístsica</a>
 
+<a href="https://sites.google.com/view/foroestadisticaaplicada/p%C3%A1gina-principal?authuser=0">Link
+del evento</a>.
+
 Materiales por parte de Dr. Shu Wei Chou Chen.
 
 **Curso corto:** Modelación estadística y aprendizaje de máquinas
