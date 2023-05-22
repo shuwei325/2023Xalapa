@@ -1,2 +1,4 @@
 
 README.Rmd
+*.Rmd
+.Rhistory
