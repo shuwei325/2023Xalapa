@@ -1,4 +1,4 @@
-## (<https://sites.google.com/view/foroestadisticaaplicada/p%C3%A1gina-principal?authuser=0>)\[XII Foro Internacional de Estadístsica\]
+## <a href="https://sites.google.com/view/foroestadisticaaplicada/p%C3%A1gina-principal?authuser=0">XII Foro Internacional de Estadístsica</a>
 
 Materiales por parte de Dr. Shu Wei Chou Chen.
 
