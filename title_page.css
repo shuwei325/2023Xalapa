@@ -1,0 +1,6 @@
+.title-slide {
+  background-image: url(figures/estadistica3.png),
+                    url(figures/CIMPA_logo.png);
+  background-position: 15% 90%, 75% 90%;
+  background-size: 350px, 350px;
+}

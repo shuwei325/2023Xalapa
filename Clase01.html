@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Modelación estadística y aprendizaje de máquinas aplicada a datos climáticos y salud pública.</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Prof. Shu Wei Chou Chen" />
+    <script src="Clase01_files/header-attrs/header-attrs.js"></script>
+    <link href="Clase01_files/remark-css/default.css" rel="stylesheet" />
+    <link href="Clase01_files/remark-css/metropolis.css" rel="stylesheet" />
+    <link href="Clase01_files/remark-css/metropolis-fonts.css" rel="stylesheet" />
+    <link href="Clase01_files/remark-css/ninjutsu.css" rel="stylesheet" />
+    <link rel="stylesheet" href="title_page.css" type="text/css" />
+    <link rel="stylesheet" href="text_color.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: left, title-slide
+
+.title[
+# Modelación estadística y aprendizaje de máquinas aplicada a datos climáticos y salud pública.
+]
+.subtitle[
+## XII Foro Internacional de Estadística Aplicada - Universidad Veracruzana
+]
+.author[
+### Prof. Shu Wei Chou Chen
+]
+.institute[
+### Universidad de Costa Rica
+]
+.date[
+### 22 de mayo 2023
+]
+
+---
+
+
+
+
+
+
+
+
+# Sobre la Universidad de Costa Rica
+
+**¿Dónde está?**
+
+<iframe src="https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d3929.960980818324!2d-84.05328617748329!3d9.93720465386093!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1suniversidad%20de%20costa%20rica!5e0!3m2!1sen!2scr!4v1682707371027!5m2!1sen!2scr" width="600" height="450"></iframe>
+
+
+---
+class: split-two
+
+# Universidad de Costa Rica
+
+.column[
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;img src="figures/UCR.jpg"&gt;
+**Universidad de Costa Rica**
+
+&lt;img src="figures/UCR_FCE.jpg"&gt;
+**Escuela de Estadística - Facultad de Ciencias Económicas**
+
+]
+
+.column[
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;img src="figures/UCR_CIMPA.jpg"&gt;
+**Centro de Investigación en Matemática Pura y Aplicada**
+]
+
+---
+
+# Agenda del curso
+
+**Lunes 22 de mayo: 4 horas.**
+
+&lt;ol start="1"&gt;
+1. Introducción.  &lt;br&gt;
+2. Series temporales.  &lt;br&gt;
+3. Modelos de regresión.  &lt;br&gt;
+Aplicaciones.  &lt;br&gt;
+&lt;/ol&gt;
+
+**Martes 23 de mayo: 4 horas.**
+
+
+&lt;ol start="5"&gt;
+4.	Modelos aditivos generalizados y otros modelos. &lt;br&gt;
+5.  Ciencia de datos y Machine learning &lt;br&gt;
+6.	Análisis espacial y espacio-temporales. &lt;br&gt;
+Aplicación. &lt;br&gt;
+&lt;/ol&gt;
+
+---
+# 1.	Introducción
+
+- La estadística como una herramienta esencial en las investigaciones, negocios, instituciones gubernamentales para comprensión de los fenómenos del estudio y la toma de decisión.
+
+--
+
+- En la Salud Pública:
+  - Vigilancia de la salud en una población para comprender tendencias y patrones.
+  - Evaluación de la eficiencia de las intervenciones.
+  - Planificación de atención médica, tomando en cuenta las desigualdades en la región, grupos específicos, etc.
+
+--
+- Clima:
+  - Análisis de datos climáticos.
+  - Modelación climática.
+  - Evaluación del cambio climático.
+  - Planificación y adaptación.
+
+---
+# 1.	Introducción
+
+- **Dos enfoques:**
+
+1. Estudios a nivel de personas (unidad estadística) y ver cuáles son los factores que influyen en la mejora de la salud poblacional.
+
+2. Estudios a nivel geográfica y temporal para identificar patrones espcial y temporal que tienen estos fenómenos.
+
+- El supuesto de "independencia" es cuestionable.
+
+
+---
+# 1.	Introducción: Motivación
+
+- El dengue es una enfermedad sensible al clima (temperatura, humedad, precipitación, etc.).
+- Afecta la biología, el comportamiento y la disponibilidad del mosquito para reproducirse, desarrollarse, propagar el virus e interactuar con el huésped humano.
+- El uso de imágenes satelitales y monitoreo del clima como datos de entrada en modelos de aprendizaje automático y otros enfoques de aprendizaje estadístico han mostrado resultados prometedores que podrían predecir de manera efectiva el riesgo relativo de transmisión del dengue.
+
+&lt;img src="figures/dengue_world.jpg" width="30%" style="display: block; margin: auto;" /&gt;
+
+
+---
+# 1.	Introducción: Motivación
+
+- Circulación endémica de tres de los cuatro serotipos del virus del dengue (DENV-1, DENV-2, DENV-3).
+- Clima tropical, que proporciona condiciones ideales para que el vector del mosquito sobreviva, se replique y transmita la enfermedad.
+- Microclimas separados por distancias cortas hacen que sea crucial personalizar el análisis de riesgo de transmisión del dengue en un país.
+
+&lt;img src="figures/costa_rica.png" width="40%" style="display: block; margin: auto;" /&gt;
+
+---
+# 1.	Introducción: Motivación
+
+- Las autoridades sanitarias no utilizan formalmente la información meteorológica como entrada para desarrollar actividades de prevención y control.
+- Una colaboración inicial con las autoridades sanitarias costarricenses permitió identificar 32 municipios (cantones) de interés basados en sus características entomológicas y epidemiológicas.
+
+---
+# 1.	Introducción: Motivación
+
+## Datos:
+- Casos mensuales sospechosos y confirmados clínicamente de fiebre del dengue en Costa Rica desde el año 2000 hasta 2021.
+- El Ministerio de Salud tiene un interés particular en la predicción mensual de 32 cantones específicos debido a su comportamiento epidemiológico particular.
+- Riesgo relativo:
+`$$RR_{i,t}=\frac{\frac{\text{Casos}_{i,t}}{\text{Población}_{i,t}}}{\frac{\text{Casos}_{CR,t}}{\text{Población}_{CR,t}}}$$`
+
+
+---
+# 1.	Introducción: Motivación
+
+## Datos:
+
+- **Cálculos de precipitación diaria** ( `\(P_{i,t}\)` ): obtenido de datos de Climate Hazards Group InfraRed Precipitation with Station data (CHIRPS).
+- **Anomalía de la temperatura de la superficie del mar ENSO** ( `\(S_{i,t}\)` ): obtenido del Climate Prediction Center (CPC), National Oceanographic and Atmospheric Administration (NOAA).
+- **Índice de Vegetación de Diferencia Normalizada (NDVI)** ( `\(N_{i,t}\)` ): obtenido del Moderate Resolution Imaging Spectroradiometer (MODIS).
+- **Temperatura de la superficie terrestre durante el día** ( `\(L_{i,t}\)` ): obtenida de MODIS.
+- **Índice Tropical del Atlántico Norte** ( `\(TN_{i,t}\)` ): obtenido de NOAA.
+
+
+---
+# 1.	Introducción: Motivación
+
+- Covariables climáticas observadas y valores de pronóstico en dos cantones específicos: Alajuela (paneles izquierdos) y Quepos (paneles derechos). Línea negra: covariables climáticas observadas, línea roja: valores de pronóstico y áreas sombreadas en rojo: regiones de confianza del `\(95\%\)`.
+
+&lt;img src="figures/TS_combined.jpg" width="45%" style="display: block; margin: auto;" /&gt;
+
+
+---
+# 1.	Introducción: Motivación
+
+- Periodo de entrenamiento (2000-2020) usando modelo jerárquico bayesiano (INLA).
+
+&lt;img src="figures/prediction.RR.in.jpg" width="60%" style="display: block; margin: auto;" /&gt;
+
+
+---
+# 1.	Introducción: Motivación
+
+- Periodo de prueba (2021) usando modelo jerárquico bayesiano (INLA).
+
+&lt;img src="figures/prediction.RR.out.jpg" width="60%" style="display: block; margin: auto;" /&gt;
+
+
+---
+# 1.	Introducción: Motivación
+
+- Permite manejo de recursos geográficamente (2021).
+
+.pull-left[
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="figures/prediction.map.RR.out.jpg" alt="Predicción de RR" width="100%" /&gt;
+&lt;p class="caption"&gt;Predicción de RR&lt;/p&gt;
+&lt;/div&gt;
+]
+
+.pull-right[
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="figures/dif.map.RR.out.jpg" alt="Error porcentual absoluto" width="100%" /&gt;
+&lt;p class="caption"&gt;Error porcentual absoluto&lt;/p&gt;
+&lt;/div&gt;
+]
+
+---
+# Tema 2: Análisis de series temporales
+
+
+---
+# Introducción
+
+Una **serie temporal** (**serie cronológica** o **serie de tiempo**) es una colección de datos recolectados en el tiempo.
+
+Ejemplos:
+
+
+  - .red[**Salud**]:
+      - número de casos de una enfermedad, electrocardiograma de un paciente.
+  - .red[**Meteorología**]: 
+      - precipitación, temperatura
+      - contaminación de una cierta partícula.
+      - promedio anual de manchas solares
+  - **Demografía**:
+      - mortalidad, natalidad.
+  - **Economía**:
+      - exportaciones, ventas, tipo de cambio, bolsa de valores.      
+      
+---
+# Series temporales continuas y discretas
+
+- Una series temporal **continua**: si las observaciones de la serie se registran para todo tiempo `\(t\)` en un intervalo de tiempo.
+  - registro continuo de la temperatura.
+  - registro continuo de marea en Puntarenas.
+
+- Una series temporal **discreta**: si las observaciones de la serie se registran  sólo en momentos particulares. Puede ser equiespaciadas o no.
+  - precipitación anual en San José.
+  - número diario de casos nuevos de COVID19.
+
+
+---
+# Series temporales continuas y discretas
+
+- El muestreo de una serie continua realizado en intervalos de tiempo iguales, `\(\Delta t\)`, en un intervalo de tiempo `\([0,T]\)` produce una serie discreta equiespaciada de `\(N=\frac{T}{\Delta t}\)` puntos.
+  - temperatura medida en cada hora.
+
+- Otro caso es cuando se toma el valor de la serie acumulando (o agregando) valores en intervalos de tiempos iguales.
+  - temperatura promedio de cada hora en una estación atmosférica.
+  - precipitación mensual en un área específica.
+
+---
+# Ejemplos:
+
+.pull-left[
+&lt;div class="figure"&gt;
+&lt;img src="Clase01_files/figure-html/unnamed-chunk-10-1.png" alt="Anomalia de temperatura del superficie del mar" width="100%" /&gt;
+&lt;p class="caption"&gt;Anomalia de temperatura del superficie del mar&lt;/p&gt;
+&lt;/div&gt;
+]
+
+.pull-right[
+&lt;div class="figure"&gt;
+&lt;img src="Clase01_files/figure-html/unnamed-chunk-11-1.png" alt="Casos reportados de dengue en Costa Rica (2000-2020)" width="100%" /&gt;
+&lt;p class="caption"&gt;Casos reportados de dengue en Costa Rica (2000-2020)&lt;/p&gt;
+&lt;/div&gt;
+]
+
+---
+
+# Objetivos del análisis de series temporales
+
+  
+  - **Predicción:** pronosticar valores en el futuro. Puede ser de corto plazo o largo plazo.
+  
+  - **Descripción:** describir por medio de gráficos o modelos el fenómeno. Verificar de existencia de tendencias, ciclos, estacionalidad. Encontrar periodicidad de los datos.
+  
+  - **Simulación:** generar posibles escenarios con condiciones estrictas.
+
+  - **Control de procesos:** mantener en control una cierta variable en el tiempo.
+
+---
+# Componentes de las series temporales
+
+* Existe varios componentes en el comportamiento de series temporales:
+
+  1. **Tendencia:** comportamiento creciente o decreciente en largo plazo. Ej: crecimiento de población, ingresos por ventas.
+  2. **Estacionalidad:** patrón o variaciones afectadas por repetición de una frecuencia dada (ej. semana, mes y año.). Consecuencia de cambios climáticos, comportamiento de la gente en el tiempo. Ej: venta de productos que dependen de la temporada, temperatura, pasajes de avión. 
+
+  3. **Ciclo:** cuando los datos muestran subidas y bajadas de largo plazo, generalmente con frecuencia desconocida. Ej: ciclo económico, período de prosperidad alternando con período de recesión.
+
+  4. **Movimiento irregular o error:** variaciones en la serie que no siguen ningún patrón regular. Es el residuo que queda en una serie después de eliminar los componentes anteriores (tendencia-ciclo y estacionalidad).
+
+---
+# Ejemplo: Niño12SSTA 
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="Clase01_files/figure-html/unnamed-chunk-12-1.png" alt="Anomalía de la temperatura de la superficie del mar ENSO " width="50%" /&gt;
+&lt;p class="caption"&gt;Anomalía de la temperatura de la superficie del mar ENSO &lt;/p&gt;
+&lt;/div&gt;
+
+---
+# Ejemplo: Temperatura en Alajuela
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="Clase01_files/figure-html/unnamed-chunk-13-1.png" alt="Temperatura en Alajuela" width="50%" /&gt;
+&lt;p class="caption"&gt;Temperatura en Alajuela&lt;/p&gt;
+&lt;/div&gt;
+
+---
+# Descomposición de series temporales
+### Ejemplo: Temperatura en Alajuela
+
+.pull-left[
+&lt;img src="Clase01_files/figure-html/unnamed-chunk-14-1.png" width="90%" /&gt;
+]
+.pull-right[
+&lt;img src="Clase01_files/figure-html/unnamed-chunk-15-1.png" width="90%" /&gt;
+]
+
+
+---
+# Ejemplo: Casos de dengue
+  
+.pull-left[
+&lt;img src="Clase01_files/figure-html/unnamed-chunk-16-1.png" width="100%" /&gt;
+]
+
+.pull-right[
+&lt;img src="Clase01_files/figure-html/unnamed-chunk-17-1.png" width="100%" /&gt;
+]
+
+---
+# Técnicas estadísticas para el análisis de series temporales
+
+- **Técnicas de suavizamiento exponencial**.
+- **Regresión**.
+- **Modelos ARIMA de Box-Jenkins**.
+- Modelos ARCH-GARCH.
+- Análisis de intervención.
+- Modelos Espacio de Estados.
+- Modelos Multivariados.
+- Modelos causales.
+- Modelos no lineales.
+- ...
+
+---
+# Modelos de series temporales
+
+- El principal objetivo del análisis de series temporales es construir modelos matemáticos que proporciona una descripción de los datos muestreados. 
+
+- Además, sirve para realizar inferencia del comportamiento en el intervalo observado o a futuro. 
+
+
+---
+# Modelos de series temporales
+
+- Considere una serie temporal como una secuencia de variables aleatorias
+
+`$$X_1,X_2,..,X_t,...$$`
+
+- **Proceso estocástico:** una colección de variables aleatorias indexada por un conjunto `\(\mathcal{T}\)`, 
+
+`$$\left\lbrace X_t, t \in \mathcal{T} \right\rbrace$$`
+
+- Vamos a enfocar el caso cuando `\(\mathcal{T}\)` es un conjunto discreto, i.e. `\(t=0,1,2,...\)`.
+
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="timeseriesmodel.png" alt="Figura tomada en Morettin (2017)" width="40%" /&gt;
+&lt;p class="caption"&gt;Figura tomada en Morettin (2017)&lt;/p&gt;
+&lt;/div&gt;
+
+
+---
+# Modelos de series temporales
+
+- Un modelo de series temporales generalmente especifica la distribución conjunta de la secuencia `\(X_t\)`.
+
+`$$P\left(X_1\leq x_1, X_2\leq x_2,...,X_t \leq x_t \right)$$`
+
+- Una observación de un proceso estocástico es una serie de valores observados en el tiempo y es llamada **una realización** de un proceso estocástico.
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="realizaciones.png" alt="Figura tomada en Morettin (2017)" width="50%" /&gt;
+&lt;p class="caption"&gt;Figura tomada en Morettin (2017)&lt;/p&gt;
+&lt;/div&gt;
+
+---
+# Modelos de series temporales
+### Ruido blanco
+.pull-left[
+- Una colección de variables aleatorias no correlacionadas, `\(w_t\)`, con media 0 y variancia `\(\sigma_w^2\)`.
+
+- Denotado por `\(w_t \sim wn(0,\sigma_w^2)\)`.
+
+- Simulación de una colección de `\(w_t \sim N(0,1)\)` con `\(T=500\)`.
+
+]
+.pull-right[
+&lt;img src="Clase01_files/figure-html/unnamed-chunk-20-1.png" width="90%" /&gt;
+]
+
+---
+# Autoregresión
+
+.pull-left[
+
+- Sea `\(w_t \sim wn(0,\sigma_w^2)\)`.
+
+- Considere un modelo AR(1): `$$X_t=\phi X_{t-1}+w_t$$`
+
+- Veamos dos casos de `\(\phi=0.9\)` y `\(-0.9\)`.
+
+]
+.pull-right[
+&lt;img src="Clase01_files/figure-html/unnamed-chunk-21-1.png" width="100%" /&gt;
+]
+
+---
+# Alguna función (señal) + ruido blanco
+
+.pull-left[
+
+- Muchos modelos de series temporales asumen que existe una señal con alguna variación periódica, contaminada por un ruido aleatorio.
+
+- Considere `\(x_t=2 \cos \left( 2 \pi \frac{t+15}{50} \right)+ w_t\)` para `\(t=1,...,500\)`.
+
+- El modelo general `\(A cos(2\pi \omega t + \phi)\)` con amplitud `\(A\)`, frecuencia `\(\omega\)`, y fase `\(\phi\)`.
+
+- El ejemplo anterior considera `\(A=2\)`, `\(\omega=1/50\)` (un ciclo cada 50 puntos en el tiempo) y `\(\phi=2 \pi 15/50=0.6 \pi\)`.
+
+
+]
+.pull-right[
+&lt;img src="Clase01_files/figure-html/unnamed-chunk-22-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+# Medidas de dependencia
+
+- Una descripción completa de un modelo de series temporales es proporcionado por la distribución de probabilidad conjunta, i.e. dados tiempos arbitrarios `\(t_1,...,t_n\)` para `\(n\)` entero positivo y `\(c_1,...,c_n\)` n valores constantes:
+
+$$
+	F_{t_1,...,t_t}(c_1,...,c_t)=P\left(X_1\leq c_1, X_2\leq c_2,...,X_t \leq c_t \right)
+$$
+- Aunque esa distribución describe los datos globalmente, en la práctica, esa distribución multidimencional es dificil de conocer, excepto cuando es normal multivariado (¿por qué?)
+
+- La distribución marginal en el tiempo `\(t\)`,
+`$$F_t(x)=P(X \leq x)$$`
+- La función densidad marginal en el tiempo `\(t\)`,
+`$$f_t(x)= \frac{\partial F_t(x)}{\partial x}$$`
+---
+# Medidas de dependencia
+
+- **La función de media** para el tiempo `\(t\)` es definida por
+
+`$$\mu_t= E(X_t)=\int_{-\infty}^\infty x f_t(x)dx$$`
+
+- **La función de autocovariancia** es definida por
+
+`$$\gamma_X(t,s)=\gamma(t,s)= Cov(X_t,X_s)=E\left[ (X_t-\mu_t)(X_s-\mu_s) \right]$$`
+
+- Mide la dependencia lineal entre dos puntos de tiempo de la misma serie.
+
+- **La función de variancia** en el tiempo `\(t\)` es definida por
+
+`$$\gamma_X(t,t)=Var(X_t)$$`
+
+
+- Considere el ejemplo del ruido blanco `\(w_t\)`:
+
+$$
+\gamma_w(t,s)=Cov(w_t,w_s)=\left\lbrace 
+`\begin{aligned}
+\sigma_w^2, &amp; &amp; t = s \\
+0, &amp; &amp;  t \neq s,
+\end{aligned}`
+\right. 
+$$
+
+---
+# Medidas de dependencia
+
+- **La función de autocorrelación** es definida por
+
+`$$\rho_X(t,s)=\frac{\gamma(t,s)}{\sqrt{\gamma(t,t)\gamma(s,s)}}$$`
+- Considere el ejemplo del ruido blanco `\(w_t\)`:
+
+$$
+\rho_w(t,s)=\left\lbrace 
+`\begin{aligned}
+1, &amp; &amp; t = s \\
+0, &amp; &amp;  t \neq s,
+\end{aligned}`
+\right. 
+$$
+
+---
+# Procesos estacionarios
+
+### Definición: 
+
+Un **proceso estrictamente estacionario** es un proceso estocástico cuyo comportamiento de cada colección de valores
+	`$$\left\lbrace X_{t_1},X_{t_2},...,X_{t_k} \right\rbrace$$`
+	es idéntico a un conjunto bajo un cambio de tiempo
+	`$$\left\lbrace X_{t_1+h},X_{t_2+h},...,X_{t_k+h} \right\rbrace.$$`
+	Esto es,
+	`$$P\left(X_{t_1} \leq c_1,...,X_{t_k} \leq c_k \right)=P\left(X_{t_1+h}\leq c_1,...,X_{t_k+h} \leq c_k \right)$$`
+	para todo `\(k=1,2,...\)`, todo tiempo `\(t_1,...,t_k\)`, todos las constantes `\(c_1,...,c_k\)` y todos los cambios de tiempo `\(h=0, \pm 1, \pm 2,...\)`.
+
+---
+# Procesos estacionarios
+
+### Definición:
+
+Un **proceso débilmente estacionario** es un proceso con variancia finita tal que 
+1. la función de la media es constante `$$\mu_t=E(X_t)=\mu$$`
+
+2. La función de autocovariancia depende solamente de la diferencia de dos puntos `\(t, t+h\)`
+ `$$\gamma(t,t+h)=Cov(X_t,X_{t+h})=Cov(X_0,X_h):=\gamma(h).$$`
+
+Consecuentemente, la **función de autocorrelación** de un proceso estacionario es definido como
+
+`$$\rho(h)=\frac{\gamma(t,t+h)}{\sqrt{\gamma(t+h,t+h)\gamma(t,t)}}=\frac{\gamma(h)}{\gamma(0)}.$$`
+
+- En la práctica, se refiere simplemente a un proceso estacionario.
+
+---
+# Ejemplo 
+
+- Considere el ejemplo del ruido blanco `\(w_t\)`
+
+  - `$$E(w_t)=0 ~\text{para todo}~ t$$`.
+  - 
+$$
+\gamma_w(t,t+h)=\left\lbrace 
+`\begin{aligned}
+\sigma_w^2, &amp; &amp; h = 0 \\
+0, &amp; &amp;  h \neq 0,
+\end{aligned}`
+\right. 
+$$
+
+
+- Entonces, `\(w_t\)` es estacionario.
+
+
+
+---
+# Modelo ARMA(p,q)
+
+Un modelo de series temporales `\(\left\lbrace X_t \right\rbrace\)` es llamado **autorregresivo de medias móviles**, denotado por ARMA(p,q) si es estacionario y cumple la siguiente ecuación:
+
+`$$X_t+\phi_1 X_{t-1}+...+\phi_p X_{t-p}=w_t+\theta_1 w_{t-1}+...+\theta_q w_{t-q},$$`
+		
+donde `\(\phi_p \neq 0,\theta_q \neq 0\)` y `\(w_t \sim wn(0,\sigma_w^2)\)` con `\(\sigma_w^2&gt;0\)`.	
+
+
+---
+# Ejemplo: Niño12SSTA
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="Clase01_files/figure-html/unnamed-chunk-23-1.png" alt="Anomalía de la temperatura de la superficie del mar ENSO" width="50%" /&gt;
+&lt;p class="caption"&gt;Anomalía de la temperatura de la superficie del mar ENSO&lt;/p&gt;
+&lt;/div&gt;
+
+---
+# Ejemplo: Niño12SSTA
+
+
+```r
+anomalia &lt;- ts(Alajuela$Nino12SSTA,start=c(2000,2),frequency=12)
+arima_anomalia &lt;- auto.arima(anomalia)
+summary(arima_anomalia)
+```
+
+```
+## Series: anomalia 
+## ARIMA(2,0,0) with zero mean 
+## 
+## Coefficients:
+##          ar1      ar2
+##       1.0815  -0.2431
+## s.e.  0.0604   0.0606
+## 
+## sigma^2 = 0.1702:  log likelihood = -136.35
+## AIC=278.7   AICc=278.8   BIC=289.34
+## 
+## Training set error measures:
+##                       ME      RMSE       MAE      MPE     MAPE      MASE
+## Training set -0.02407734 0.4109346 0.3224691 26.14543 146.5156 0.3349472
+##                      ACF1
+## Training set -0.008928639
+```
+
+---
+# Ejemplo: Niño12SSTA
+
+
+```r
+plot(arima_anomalia$x,col="red", ylab="anomalia")
+lines(fitted(arima_anomalia),col="blue")
+```
+
+&lt;img src="Clase01_files/figure-html/unnamed-chunk-25-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+---
+# Ejemplo: Niño12SSTA
+
+&lt;img src="Clase01_files/figure-html/unnamed-chunk-26-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+
+---
+# Series temporales multivariadas
+
+- En la práctica, es común enfrentar situaciones en donde se presentan varias series temporales.
+
+- Vamos a centrar el caso del análisis multivariada de series temporales estacionarias, con la posibilidad de presentar algún tipo de tendencia determinística.
+
+---
+# Ejemplo: Temperatura
+  
+.pull-left[
+&lt;img src="Clase01_files/figure-html/unnamed-chunk-27-1.png" width="100%" /&gt;
+]
+
+.pull-right[
+&lt;img src="Clase01_files/figure-html/unnamed-chunk-28-1.png" width="100%" /&gt;
+]
+
+---
+# Medidas de dependencia 
+
+.blue[**Caso bivariada**:]
+
+- Recuerde que **la función de autocorrelación** es definida por
+
+`$$\rho_X(t,s)=\frac{\gamma(t,s)}{\sqrt{\gamma(t,t)\gamma(s,s)}}$$`
+
+- Se puede generalizar estas medidas a dos series `\(X_t\)` y `\(Y_t\)`. Defina:
+
+- **la función de autocovariancia cruzada**:
+
+`$$\gamma_{XY}(t,s)= Cov(X_t,Y_s) =E\left[ (X_t-\mu_{Xt})(Y_s-\mu_{Ys}) \right]$$`
+
+- **la función de autocorrelación cruzada**:
+
+`$$\rho_{XY}(t,s)= \frac{\gamma_{XY}(t,s)}{\sqrt{\gamma_{X}(t,t)\gamma_{Y}(s,s)}}$$`
+
+
+---
+# Medidas de dependencia (caso K-variada)
+
+.blue[**Caso k-variada**:]
+
+La generalización a series temporales multivariadas con `\(K\)` componentes, `\(X_{t1},...X_{tK}, t=1,...,T\)`, es intuitivo:
+
+- **la función de autocovariancia cruzada**:
+
+`$$\gamma_{jk}(t,s)= Cov(X_{tj},X_{sk}) =E\left[ (X_{tj}-\mu_{jt})(X_{sk}-\mu_{ks}) \right]$$`
+para `\(j,k=1,...,K.\)`
+
+---
+# Estacionariedad conjunta
+
+.blue[**Caso k-variada**:]
+
+- Sea `\(X_t=(X_{t1},...,X_{tK})'\)` un vector `\(K \times 1\)` de series temporales. Se dice que `\(X_t\)` es (débilmente) estacionario si el vector de medias es constante en el tiempo
+`$$\mu=E(X_t)=\left(\begin{array}{c} \mu_1\\ \vdots \\ \mu_K \end{array}\right)$$`
+
+- Y la matriz de autocovariancia depende únicamente del rezago `\(h\)`, i.e.
+`$$\Gamma(h)= E[(X_{t+h}-\mu)(X_{t}-\mu)' ]$$`
+donde los elementos de la matriz son funciones de covariancia cruzada, `\(\gamma_{jk}(h)= Cov(X_{t+h,j},X_{t,k}) =E\left[ (X_{t+h,j}-\mu_{j})(X_{tk}-\mu_{k}) \right]\)` para `\(j,k=1,...,K\)`. 
+
+- Note que como `\(\gamma_{jk}(h)=\gamma_{kj}(-h)\)`, entonces
+
+`$$\Gamma(-h)=\Gamma'(h)$$`
+
+---
+# Estimación
+
+- **la matriz de autocovariancia muestral** es definida por
+`$$\hat{\Gamma}(h)=\frac{1}{T}\sum_{t=1}^{T-h} (X_{t+h}-\bar{X})(X_{t}-\bar{X})',$$`
+donde `\(\bar{X}=\frac{1}{T}\sum_{t=1}^{T} X_{t}\)` es el vector de media muestral.
+
+- Se puede comprobar que:
+
+`$$\hat{\Gamma}(-h)=\hat{\Gamma}(h)'.$$`
+
+
+---
+# Modelos autorregresivos multivariados, VAR(1)
+
+- Es un caso particular de los modelos de series temporales multivariados que supone que la observación de cada variable depende linealmente de los rezagos pasados de ella misma y también de otras variables.
+
+- Para introducir el modelo, vamos a empezar VAR(1) con 3 series: `\(X_{t,1},X_{t,2},X_{t,3}\)`.
+
+- El VAR(1) se define de la siguiente forma:
+
+`$$X_{t,1}=\alpha_1+\Phi_{11}X_{t-1,1}+\Phi_{12}X_{t-1,2}+\Phi_{13}X_{t-1,3}+w_{t,1}$$`
+
+`$$X_{t,2}=\alpha_2+\Phi_{21}X_{t-1,1}+\Phi_{22}X_{t-1,2}+\Phi_{23}X_{t-1,3}+w_{t,2}$$`
+
+`$$X_{t,3}=\alpha_3+\Phi_{31}X_{t-1,1}+\Phi_{32}X_{t-1,2}+\Phi_{33}X_{t-1,3}+w_{t,3}$$`
+- Note que cada ecuación establece un modelo autorregresivo de orden 1 más otras variables de un rezago.
+
+
+
+---
+# VAR(1)
+
+- En concreto, el modelo anterior se puede resumir en
+
+`$$\boldsymbol{X}_{t}=\boldsymbol{\alpha}+\boldsymbol{\Phi}\boldsymbol{X}_{t-1}+\boldsymbol{w}_{t}$$`
+en donde
+
+`$$\boldsymbol{X}_{t}=
+\begin{bmatrix}x_{t,1}\\
+x_{t,2}\\
+x_{t,3}
+\end{bmatrix}~~~~~
+\boldsymbol{\alpha}=
+\begin{bmatrix}\alpha_{1}\\
+\alpha_{2}\\
+\alpha_{3}
+\end{bmatrix}~~~~~
+\boldsymbol{\Phi}=\begin{bmatrix}\Phi_{11} &amp; \Phi_{12} &amp; \Phi_{13} \\
+\Phi_{21} &amp; \Phi_{22} &amp; \Phi_{23}\\
+\Phi_{31} &amp; \Phi_{32} &amp; \Phi_{33}
+\end{bmatrix}~~~~~
+\boldsymbol{w}_{t}=
+\begin{bmatrix}w_{t,1}\\
+w_{t,2}\\
+w_{t,3}
+\end{bmatrix}$$`
+
+
+
+---
+# ARX(1) multivariado
+
+- También es posible extender el modelo anterior con intercepto y tendencia:
+
+`$$\boldsymbol{X}_{t}=\boldsymbol{\Gamma} \boldsymbol{u}_t+\boldsymbol{\Phi}\boldsymbol{X}_{t-1}+\boldsymbol{w}_{t},$$`
+
+`$$\text{donde}~~ \boldsymbol{\Gamma}=\begin{bmatrix}\alpha_{1} &amp; \beta_{1}  \\
+\alpha_{2} &amp; \beta_{2} \\
+\alpha_{3} &amp; \beta_{3}
+\end{bmatrix} ~~\text{y}~~ \boldsymbol{u}_t= \begin{bmatrix}1  \\
+t \end{bmatrix}$$`
+
+- Es decir,
+
+`$$X_{t,1}=\alpha_1 + \beta_1 t+\Phi_{11}X_{t-1,1}+\Phi_{12}X_{t-1,2}+\Phi_{13}X_{t-1,3}+w_{t,1}$$`
+
+`$$X_{t,2}=\alpha_2+ \beta_2 t+\Phi_{21}X_{t-1,1}+\Phi_{22}X_{t-1,2}+\Phi_{23}X_{t-1,3}+w_{t,2}$$`
+
+`$$X_{t,3}=\alpha_3+ \beta_3 t+\Phi_{31}X_{t-1,1}+\Phi_{32}X_{t-1,2}+\Phi_{33}X_{t-1,3}+w_{t,3}$$`
+
+- Note que X en ARX se refiere al vector exógeno denotado por `\(u_t\)` y se puede extender fácilmente incluyendo variable exógenas.
+
+---
+# ARX(p) multivariado
+
+- De esta forma, se puede generalizar a series temporales `\(K\)`-dimensionales y `\(p\)` rezagos:
+
+`$$\boldsymbol{X}_{t}=\boldsymbol{\Gamma} \boldsymbol{u}_t+\boldsymbol{\Phi_1}\boldsymbol{X}_{t-1}+...+\boldsymbol{\Phi_p}\boldsymbol{X}_{t-p}+\boldsymbol{w}_{t}$$`
+en donde
+`$$\boldsymbol{X}_{t}=
+\begin{bmatrix}X_{t,1}\\
+\vdots \\
+X_{t,K}
+\end{bmatrix},~~~\boldsymbol{\Phi}_i=\begin{bmatrix}\Phi_{i,1,1} &amp; \dots &amp; \Phi_{i,1,K} \\
+\vdots &amp; \ddots &amp; \vdots\\
+\Phi_{i,K,1} &amp; \dots &amp; \Phi_{i,K,v}
+\end{bmatrix}~~~~~,i=1,...,p, ~~\text{y}~~~~~$$`
+`$$\boldsymbol{w}_{t}=
+\begin{bmatrix}w_{t,1}\\
+\vdots\\
+w_{t,K}
+\end{bmatrix}$$`
+
+`\(u_t\)` es un vector `\(k \times 1\)` de `\(k\)` variables exógenas y `\(\boldsymbol{\Gamma}\)` es una matriz `\(r \times k\)` de coeficientes asociados a las variables exógenas.
+
+---
+# Ejemplo: Temperatura
+  
+.pull-left[
+&lt;img src="Clase01_files/figure-html/unnamed-chunk-29-1.png" width="100%" /&gt;
+]
+
+.pull-right[
+&lt;img src="Clase01_files/figure-html/unnamed-chunk-30-1.png" width="100%" /&gt;
+]
+
+
+---
+# Ejemplo: Temperatura
+  
+
+```r
+VARselect(LSD3cantones, lag.max=10, type="both")
+```
+
+```
+## $selection
+## AIC(n)  HQ(n)  SC(n) FPE(n) 
+##     10      5      2     10 
+## 
+## $criteria
+##               1        2        3        4        5        6        7        8
+## AIC(n) 2.264648 1.786429 1.778316 1.683197 1.602637 1.579373 1.579699 1.582224
+## HQ(n)  2.350711 1.924130 1.967655 1.924174 1.895251 1.923626 1.975589 2.029752
+## SC(n)  2.478388 2.128413 2.248543 2.281669 2.329352 2.434332 2.562901 2.693670
+## FPE(n) 9.627901 5.968514 5.920939 5.384728 4.969400 4.857152 4.861475 4.877345
+##               9       10
+## AIC(n) 1.542445 1.539141
+## HQ(n)  2.041610 2.089944
+## SC(n)  2.782135 2.907075
+## FPE(n) 4.691483 4.681359
+```
+
+
+---
+# Ejemplo: Temperatura
+  
+&lt;img src="Clase01_files/figure-html/unnamed-chunk-32-1.png" width="70%" style="display: block; margin: auto;" /&gt;
+
+
+---
+# Otros temas 
+
+### Técnicas para series temporales
+- Descomposición de series temporales.
+- Técnicas de suavizamiento exponencial.
+- Regresión.
+
+
+### Extensiones de ARIMA.
+- Modelos SARIMA
+- Modelos ARCH-GARCH.
+- Análisis de intervención.
+- Modelos Espacio de Estados.
+- Modelos Multivariados. 
+ 
+
+---
+# Tema 3: Modelos de Regresión
+
+
+---
+# Regresión lineal múltiple
+
+- La forma general de un modelo de regresión lineal múltiple es:
+
+`$$Y_t=\beta_0+\beta_1 X_{t,1}+\beta_2 X_{t,2}+...+\beta_p X_{t,p}+\epsilon_t, t=1,...,T,$$` 
+
+donde `\(Y_t\)` es la variable a pronosticar y `\(X_1,...,X_p\)` son los `\(p\)` variables predictoras. Las variables predictoras pueden ser numéricas o categóricas (con el manejo apropiado de factores).   
+Los coeficientes `\(\beta_1,...,\beta_p\)` miden el efecto de cada predictor después de tener en cuenta los efectos de todos los demás predictores del modelo. Por lo tanto, los coeficientes miden los efectos marginales de las variables predictoras.
+
+---
+# Regresión lineal múltiple
+
+- El modelo de regresión lineal múltiple en su forma matricial:
+
+$$
+Y=X \beta+\epsilon,
+$$
+donde
+
+`$$Y=\left[ \begin{array}{c}Y_1 \\ \vdots \\Y_T \end{array}  \right],~~ X= \left(\begin{array}{ccccc} 1&amp; X_{11}&amp; X_{12} &amp; ... &amp; X_{1p}\\ 1 &amp;  X_{21}&amp; X_{22} &amp; ... &amp;X_{2p}\\ \vdots&amp; \vdots &amp; \ddots &amp;\vdots&amp; \vdots\\ 1&amp;  X_{T1}&amp; X_{T2} &amp; ... &amp;X_{Tp} \end{array}\right),$$`
+`$$\beta=\left[ \begin{array}{c}\beta_0 \\ \vdots \\\beta_T \end{array}  \right],~~\epsilon=\left[ \begin{array}{c}\epsilon_1 \\ \vdots \\\epsilon_T \end{array}  \right].$$` 
+
+
+---
+# Regresión lineal múltiple
+
+**Supocisiones del modelo:**
+
+- La relación entre la variable de pronóstico y las variables predictoras satisface esta ecuación lineal.
+
+- Los errores `\(\varepsilon_1,...,\varepsilon_T\)`:
+  - tienen media cero,
+  - no están autocorrelacionados,
+  - no están relacionados con las variables predictoras
+
+- Los errores se distribuyan normalmente con una varianza constante `\(\sigma^2\)`.
+
+- Cada predictor `\(X_i, i=1,...,p\)` supone que es observado y fijo, i.e. no es una variable aleatoria.
+
+
+
+---
+# Modelos de tendencia
+
+- Como las variables independiente son asumidas como fijas, se puede utilizar el tiempo como una variable independiente.
+
+- Los modelos más básicos:
+  - **Tendencia lineal**:
+  `$$Y_t=\beta_0+\beta_1 t + \epsilon_t$$`
+  - **Tendencia cuadrática**:
+  `$$Y_t=\beta_0+\beta_1 t +\beta_2 t^2 + \epsilon_t$$`
+
+- Regresión no lineal.
+
+
+---
+# Niño12SSTA
+
+`$$Y_t=\alpha_0+\alpha_1 t + \alpha_2 t^2 +\alpha_3 t^3+\beta_1 I_{1}+...+\beta_11 I_{11}+\epsilon_t$$` 
+
+
+
+
+```r
+mod1&lt;-tslm(y~trend+I(trend^2)+I(trend^3)+season,datos1)
+round(summary(mod1)$coefficients,4)
+```
+
+```
+##             Estimate Std. Error t value Pr(&gt;|t|)
+## (Intercept)  -0.0551     0.2765 -0.1992   0.8423
+## trend        -0.0165     0.0071 -2.3253   0.0209
+## I(trend^2)    0.0002     0.0001  3.3848   0.0008
+## I(trend^3)    0.0000     0.0000 -3.8667   0.0001
+## season2      -0.0258     0.2535 -0.1017   0.9190
+## season3      -0.0754     0.2534 -0.2975   0.7663
+## season4       0.0064     0.2534  0.0253   0.9798
+## season5      -0.0840     0.2534 -0.3315   0.7406
+## season6      -0.0606     0.2564 -0.2365   0.8133
+## season7      -0.0800     0.2564 -0.3121   0.7552
+## season8      -0.0779     0.2563 -0.3040   0.7614
+## season9      -0.0572     0.2563 -0.2232   0.8235
+## season10     -0.0936     0.2563 -0.3652   0.7153
+## season11     -0.0637     0.2563 -0.2487   0.8038
+## season12     -0.0467     0.2563 -0.1821   0.8557
+```
+
+
+---
+# Niño12SSTA
+
+&lt;img src="Clase01_files/figure-html/unnamed-chunk-35-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+---
+# Temperatura en Alajuela
+
+`$$Y_t=\alpha_0+\alpha_1 t + \alpha_2 t^2 +\alpha_3 t^3+\beta_1 I_{1}+...+\beta_11 I_{11}+\epsilon_t$$` 
+
+
+
+
+```r
+mod2&lt;-tslm(y~trend+I(trend^2)+I(trend^3)+season,datos2)
+round(summary(mod2)$coefficients,4)
+```
+
+```
+##             Estimate Std. Error  t value Pr(&gt;|t|)
+## (Intercept) 305.1586     0.3146 970.1265   0.0000
+## trend        -0.0286     0.0081  -3.5464   0.0005
+## I(trend^2)    0.0003     0.0001   3.9716   0.0001
+## I(trend^3)    0.0000     0.0000  -4.0225   0.0001
+## season2       2.7499     0.2883   9.5382   0.0000
+## season3       5.4468     0.2883  18.8952   0.0000
+## season4       4.0963     0.2882  14.2116   0.0000
+## season5       1.5933     0.2882   5.5282   0.0000
+## season6      -0.2500     0.2916  -0.8573   0.3921
+## season7      -0.6290     0.2916  -2.1572   0.0320
+## season8       0.2203     0.2916   0.7557   0.4506
+## season9      -0.0268     0.2915  -0.0921   0.9267
+## season10     -0.5490     0.2915  -1.8833   0.0609
+## season11     -1.3231     0.2915  -4.5389   0.0000
+## season12     -1.1530     0.2915  -3.9556   0.0001
+```
+
+
+---
+# Temperatura en Alajuela
+
+&lt;img src="Clase01_files/figure-html/unnamed-chunk-38-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+
+
+
+---
+# Extensiones de modelos de regresión
+
+- .blue[**Modelos lineales generalizados (GLM)**].
+  - variables dependientes que pertenecen a una familia exponencial: Poisson, Exponencial, etc.
+  
+`$$\begin{aligned}
+				Y_t &amp; \overset{ind}{\sim} \mathcal{E}(\mu_t,\phi)  \\
+				g(\mu_t) &amp; =\beta_0+\beta_1 X_{t,1}+\beta_2 X_{t,2}+...+\beta_p X_{t,p}, t=1,...,T
+\end{aligned}$$`
+		donde `\(\mathcal{E}(\mu_t,\phi)\)` es una familia exponencial.
+- Casos especiales: Poisson, normal, binomial, gamma, binomial negativa, etc.
+  
+---
+# Extensiones de modelos de regresión
+
+- .blue[**Modelos aditivos generalizados (GAM)**].
+
+`$$\begin{aligned}
+\boldsymbol{Y} &amp; \overset{ind}{\sim} \mathcal{E}(\boldsymbol{\mu},\boldsymbol{\phi})  \\
+g(\boldsymbol{\mu}) &amp; =\boldsymbol{X\beta} + s_1(x_1)+... + s_J(x_J).
+\end{aligned}$$`
+
+donde `\(s_j\)` es una función suavizadora no paramétrica aplicada a `\(x_j\)`, para `\(j=1,...,J\)`. 
+
+--
+
+- .blue[**Modelos aditivos generalizados para locación, escala y forma (GAMLSS)**].
+
+`$$\begin{aligned}
+	        Y &amp; \overset{ind}{\sim} \mathcal{D}(\mu,\sigma,\nu,\tau)    \\
+	        \eta_1 &amp; = g_1(\mu)= X_1\beta_1+s_{11}(x_{11})+...+s_{1J_1}(x_{1J_1}) \\
+	        \eta_2 &amp;= g_1(\sigma)= X_2\beta_2+s_{11}(x_{21})+...+s_{2J_2}(x_{2J_{2}}) \\
+	        \eta_3 &amp;= g_1(\nu)= X_3\beta_3+s_{11}(x_{31})+...+s_{3J_3}(x_{3J_3}) \\
+	        \eta_4 &amp;= g_1(\tau)= X_4\beta_4+s_{11}(x_{41})+...+s_{4J_4}(x_{4J_4}) 
+	    \end{aligned}$$`
+
+donde `\(s_{ij}\)` es función suavizadora no paramétrica. 
+la variable respuesta sigue una distribución `\(\mathcal{D}\)` con 4 parámetros: locación `\(\mu\)`, escala `\(\sigma\)`, un parámetro relacionado a la simetría `\(\nu\)`, y forma `\(\tau\)`.
+
+---
+# Extensiones de modelos de regresión
+
+.pull-left[
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="Clase01_files/figure-html/unnamed-chunk-39-1.png" alt="Datos simulados con LM" width="100%" /&gt;
+&lt;p class="caption"&gt;Datos simulados con LM&lt;/p&gt;
+&lt;/div&gt;
+]
+
+.pull-right[
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="Clase01_files/figure-html/unnamed-chunk-40-1.png" alt="Datos simulados con GAM" width="100%" /&gt;
+&lt;p class="caption"&gt;Datos simulados con GAM&lt;/p&gt;
+&lt;/div&gt;
+]
+
+---
+# Ejemplo
+
+Temperatura diaria (F) en Cairo de 01-01-1995 hasta 21-05-2005
+
+&lt;img src="Clase01_files/figure-html/unnamed-chunk-41-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+
+
+---
+# Ejemplo
+
+- Ajuste de un GAM
+
+&lt;img src="Clase01_files/figure-html/unnamed-chunk-42-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+# Agenda del curso
+
+**Lunes 22 de mayo: 4 horas.**
+
+&lt;ol start="1"&gt;
+1. Introducción.  &lt;br&gt;
+2. Series temporales.  &lt;br&gt;
+3. Modelos de regresión.  &lt;br&gt;
+Aplicaciones.  &lt;br&gt;
+&lt;/ol&gt;
+
+**Martes 23 de mayo: 4 horas.**
+
+
+&lt;ol start="5"&gt;
+4.	Modelos aditivos generalizados y otros modelos. &lt;br&gt;
+5.  Ciencia de datos y Machine learning &lt;br&gt;
+6.	Análisis espacial y espacio-temporales. &lt;br&gt;
+Aplicación. &lt;br&gt;
+&lt;/ol&gt;
+
+---
+# Referencia
+
+
+
+
+Hyndman, R. and G. Athanasopoulos (2018). _Forecasting: principles and
+practice_. Ed. by OTexts. Melbourne, Australia.
+
+Morettin, P. A. (2017). _Econometria financeira: Um curso em séries
+temporais financeiras_. Blucher.
+
+Shumway, R. H. and D. S. Stoffer (2017). _Time Series Analysis and Its
+Applications_. Springer.
+
+Wood, S. N. (2017). _Generalized Additive Models: an Introduction with
+R, Second Edition_. Chapman and Hall/CRC.
+
+---
+class: center
+
+
+&lt;style type="text/css"&gt;
+.link-style1 a {
+  color: blue;
+  text-decoration: underline;
+}
+
+.link-style2 a {
+ color: blue;
+}
+
+&lt;/style&gt;
+
+
+## ¡Muchas gracias por su atención!
+
+### **correo**: .link-style1[[shuwei.chou@ucr.ac.cr](shuwei.chou@ucr.ac.cr)]
+
+### **Mi página personal**: .link-style2[[https://shuwei325.github.io](https://shuwei325.github.io)]
+  
+    
+    
+
+.pull-left[
+&lt;img src="figures/estadistica3.png" width="100%" /&gt;
+]
+
+.pull-right[
+
+&lt;img src="figures/cimpa_logo.png" width="100%" /&gt;
+]
+
+Slides created via the R package [**xaringan**](https://github.com/yihui/xaringan).
+
+The chakra comes from [remark.js](https://remarkjs.com), [**knitr**](https://yihui.org/knitr/), and [R Markdown](https://rmarkdown.rstudio.com).
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create();
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
