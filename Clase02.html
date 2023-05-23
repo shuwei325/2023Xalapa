@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Modelación estadística y aprendizaje de máquinas aplicada a datos climáticos y salud pública.</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Prof. Shu Wei Chou Chen" />
+    <script src="Clase02_files/header-attrs/header-attrs.js"></script>
+    <link href="Clase02_files/remark-css/default.css" rel="stylesheet" />
+    <link href="Clase02_files/remark-css/metropolis.css" rel="stylesheet" />
+    <link href="Clase02_files/remark-css/metropolis-fonts.css" rel="stylesheet" />
+    <link href="Clase02_files/remark-css/ninjutsu.css" rel="stylesheet" />
+    <link rel="stylesheet" href="title_page.css" type="text/css" />
+    <link rel="stylesheet" href="text_color.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: left, title-slide
+
+.title[
+# Modelación estadística y aprendizaje de máquinas aplicada a datos climáticos y salud pública.
+]
+.subtitle[
+## XII Foro Internacional de Estadística Aplicada - Universidad Veracruzana
+]
+.author[
+### Prof. Shu Wei Chou Chen
+]
+.institute[
+### Universidad de Costa Rica
+]
+.date[
+### 23 de mayo 2023
+]
+
+---
+
+
+
+
+
+
+
+
+
+
+# Agenda del curso
+
+**Lunes 22 de mayo: 4 horas.**
+
+&lt;ol start="1"&gt;
+1. Introducción.  &lt;br&gt;
+2. Series temporales.  &lt;br&gt;
+3. Modelos de regresión.  &lt;br&gt;
+Aplicaciones.  &lt;br&gt;
+&lt;/ol&gt;
+
+**Martes 23 de mayo: 4 horas.**
+
+
+&lt;ol start="5"&gt;
+4.	Modelos aditivos generalizados y otros modelos. &lt;br&gt;
+5.  Ciencia de datos y Machine learning &lt;br&gt;
+6.	Análisis espacial y espacio-temporales. &lt;br&gt;
+Aplicación. &lt;br&gt;
+&lt;/ol&gt;
+
+
+---
+# Tema 4.	Modelos aditivos generalizados y otros modelos
+
+
+---
+# Extensiones de modelos de regresión
+
+- .blue[**Modelos lineales generalizados (GLM)**].
+  - variables dependientes que pertenecen a una familia exponencial: Poisson, Exponencial, etc.
+  
+`$$\begin{aligned}
+				Y_t &amp; \overset{ind}{\sim} \mathcal{E}(\mu_t,\phi)  \\
+				g(\mu_t) &amp; =\beta_0+\beta_1 X_{t,1}+\beta_2 X_{t,2}+...+\beta_p X_{t,p}, t=1,...,T
+\end{aligned}$$`
+		donde `\(\mathcal{E}(\mu_t,\phi)\)` es una familia exponencial.
+- Casos especiales: Poisson, normal, binomial, gamma, binomial negativa, etc.
+  
+  
+---
+# Extensiones de modelos de regresión
+
+- .blue[**Modelos aditivos generalizados (GAM)**].
+
+`$$\begin{aligned}
+\boldsymbol{Y} &amp; \overset{ind}{\sim} \mathcal{E}(\boldsymbol{\mu},\boldsymbol{\phi})  \\
+g(\boldsymbol{\mu}) &amp; =\boldsymbol{X\beta} + s_1(x_1)+... + s_J(x_J).
+\end{aligned}$$`
+
+donde `\(s_j\)` es una función suavizadora no paramétrica aplicada a `\(x_j\)`, para `\(j=1,...,J\)`. 
+
+--
+
+- .blue[**Modelos aditivos generalizados para locación, escala y forma (GAMLSS)**].
+
+`$$\begin{aligned}
+	        Y &amp; \overset{ind}{\sim} \mathcal{D}(\mu,\sigma,\nu,\tau)    \\
+	        \eta_1 &amp; = g_1(\mu)= X_1\beta_1+s_{11}(x_{11})+...+s_{1J_1}(x_{1J_1}) \\
+	        \eta_2 &amp;= g_1(\sigma)= X_2\beta_2+s_{11}(x_{21})+...+s_{2J_2}(x_{2J_{2}}) \\
+	        \eta_3 &amp;= g_1(\nu)= X_3\beta_3+s_{11}(x_{31})+...+s_{3J_3}(x_{3J_3}) \\
+	        \eta_4 &amp;= g_1(\tau)= X_4\beta_4+s_{11}(x_{41})+...+s_{4J_4}(x_{4J_4}) 
+	    \end{aligned}$$`
+
+donde `\(s_{ij}\)` es función suavizadora no paramétrica. 
+la variable respuesta sigue una distribución `\(\mathcal{D}\)` con 4 parámetros: locación `\(\mu\)`, escala `\(\sigma\)`, un parámetro relacionado a la simetría `\(\nu\)`, y forma `\(\tau\)`.
+
+
+  
+---
+# Modelos aditivos generalizados (GAM)
+
+### Univariada y con errores normales:
+
+- Considere el modelo 
+`$$y_i  = f(x) + \epsilon_i,$$`
+donde `\(\epsilon_i \sim N(0,\sigma^2)\)`.
+
+- La idea es representar `\(f(x)\)`, por medio de combinaciones de funciones bases, de tal forma que el modelo queda de forma lineal, i.e.
+`$$f(x)=\sum_{j=1}^k b_j(x) \beta_j$$`
+donde `\(\beta_j\)` son coeficientes desconocidos y `\(b_j(x)\)` es la `\(j\)`-ésima función base.
+
+- Entonces, `\(y_i  = \sum_{j=1}^k b_j(x) \beta_j + \epsilon_i\)` queda como un modelo lineal.
+
+---
+# Modelos aditivos generalizados (GAM)
+
+- Una posibilidad es usar un modelo polinomial hasta grado 4:
+
+`$$y_i  = \beta_0 + x \beta_1 +x^2 \beta_2 +x^3 \beta_3 +x^4 \beta_4 + \epsilon_i$$`
+- .red[Los polinomios no son bases útiles.]
+- Otras bases:
+
+.pull-left[
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="Clase02_files/figure-html/unnamed-chunk-2-1.png" alt="bases lineales por trozos" width="80%" /&gt;
+&lt;p class="caption"&gt;bases lineales por trozos&lt;/p&gt;
+&lt;/div&gt;
+]
+
+.pull-right[
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="Clase02_files/figure-html/unnamed-chunk-3-1.png" alt="Spline cúbico" width="80%" /&gt;
+&lt;p class="caption"&gt;Spline cúbico&lt;/p&gt;
+&lt;/div&gt;
+]
+
+---
+# Ejemplo
+
+Temperatura diaria (F) en Cairo de 01-01-1995 hasta 21-05-2005
+
+&lt;img src="Clase02_files/figure-html/unnamed-chunk-4-1.png" width="70%" style="display: block; margin: auto;" /&gt;
+
+
+
+---
+# Ejemplo
+
+- Ajuste de un GAM
+
+&lt;img src="Clase02_files/figure-html/unnamed-chunk-5-1.png" width="70%" style="display: block; margin: auto;" /&gt;
+
+---
+# Ejemplo con hospitalización de enfermedades respiratorias
+
+Hospitalizaciones semanales de enfermedades respiratorias en Sorocaba, São Paulo, Brazil de 1 de enero a 28 de noviembre de 2022.
+
+.pull-left[
+&lt;img src="./figures/aplms/hospitalization_plot.jpg" width="80%" style="display: block; margin: auto;" /&gt;
+]
+
+.pull-right[
+&lt;img src="./figures/aplms/hospitalization_season.jpg" width="80%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+# Ejemplo con hospitalizaciones
+
+- El modelo propuesto es:
+
+`$$y_i = \beta_0 + {\left\lbrace \text{PM10}_{avg}\right\rbrace}_i \cdot \beta_1 + {\left\lbrace \text{NO}_{2,min}\right\rbrace}_i  \cdot \beta_2 + {\left\lbrace \text{NO}_{2,max}\right\rbrace}_i \cdot \beta_3$$`
+`$$+ {\left\lbrace \text{NO}_{mean}\right\rbrace}_i \cdot \beta_4 + {\left\lbrace \text{RH}_{min}\right\rbrace}_i \cdot \beta_5 + f_1(time_{i}) + f_2(week_{i}) + \epsilon_i,$$`
+para `\(i=1,...,T\)` y `\(\epsilon_i = \rho_1\epsilon_{i-1} + \rho_2\epsilon_{i-2} + + \rho_3\epsilon_{i-3} + \rho_4\epsilon_{i-4}+ e_i\)`  
+con `\(e_i\)` errores independientes simétricos con media `\(0\)` y dispersión `\(\phi\)`, i.e. `\(e_i\stackrel{iid}{\sim}S(0,\phi)\)`. 
+
+$$
+h_e(e_i)=\frac{1}{\sqrt{\phi}}g(\delta_i),\quad e_i \in \mathcal{R},
+$$
+
+- Esta clase de distribuciones incluye algunas distribuciones simétricas conocidas, como la normal, t-estudiante generalizada, logística I y II, y distribuciones exponenciales de potencia.
+
+---
+# Ejemplo con hospitalizaciones
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+.pull-left[
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="./figures/aplms/trend_fig.jpg" alt="Tendencia estimada" width="80%" /&gt;
+&lt;p class="caption"&gt;Tendencia estimada&lt;/p&gt;
+&lt;/div&gt;
+]
+
+.pull-right[
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="./figures/aplms/season_fig.jpg" alt="Estacionalidad estimada" width="80%" /&gt;
+&lt;p class="caption"&gt;Estacionalidad estimada&lt;/p&gt;
+&lt;/div&gt;
+]
+
+---
+# Ejemplo con hospitalizaciones
+&lt;br&gt;
+&lt;br&gt;
+.pull-left[
+&lt;img src="./figures/aplms/tabla_coeficientes.jpg" width="150%" style="display: block; margin: auto;" /&gt;
+]
+
+.pull-right[
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="./figures/aplms/hospitalization_model.jpg" alt="Serie observada y ajustada" width="80%" /&gt;
+&lt;p class="caption"&gt;Serie observada y ajustada&lt;/p&gt;
+&lt;/div&gt;
+]
+
+
+
+---
+# Modelos no lineales de rezago distribuído
+
+- *Distributed lag non-linear model* (DLNM en inglés).
+- Sea `\(Y_1,...Y_T\)` observaciones en el tiempo. 
+- Gasparrini (2010) y Gasparrini (2014) proponen incluir efectos rezagados y no lineales:
+
+`$$\begin{align}
+			Y_t &amp; \overset{ind}{\sim} \mathcal{E}(\mu_t,\phi)\\
+			g(\mu_t) &amp; = \alpha + \sum_{j=1}^{J} s_j (x_{tj};\beta_j)+\sum_{k=1}^{K} \gamma_k u_{tk},
+\end{align}$$`
+	donde 
+	`\(u_{tk},~k=1,...K\)` son las variables predictoras que asumen efectos lineales por medio de los coeficientes `\(\gamma_k\)`,  
+	`\(s_j,~j=1,...,J\)` son funciones que especifican la relación no lineal de cada variable `\(x_{j}\)` por medio del vector de parámetros `\(\beta_j\)`.
+
+---
+# DLNM
+
+.blue[**Relación lineal de exposición-respuesta**]:
+- Considere periodos rezagados con `\(\ell_0 \leq \ell_1\)`, de tal forma que `\(t-\ell_1&lt;\dots&lt;t-\ell_0&lt;\dots&lt;t.\)`
+- Defina 
+`$$s(x;t) = \int_{\ell_0}^{\ell_1} x_{t-\ell} \dot w(\ell)  d\ell \approx \sum_{\ell=\ell_0}^{\ell_1} x_{t-\ell} w(\ell),$$`
+- Representación matricial:
+    `$$s(x,t;\eta) = \boldsymbol{q}_{x,t} \boldsymbol{C} \boldsymbol{\eta} = \boldsymbol{w}_{x,t}^\top \boldsymbol{\eta},$$`
+	donde   
+	`\(\boldsymbol{q}_{x,t}=\left[ x_{t-\ell_0},...,x_{t-\ell_1}\right]^\top\)` representa .blue[*el historial de exposición*],  
+	`\(\boldsymbol{C}\)` es una matriz `\((L-\ell_0+1) \times \nu_\ell\)` que consiste en funciones de una base específica de la relación no lineal de la transformación del vector `\(\ell=[\ell_0,...,\ell_1]^\top\)`, y  
+`\(\boldsymbol{\eta}\)` es el vector de parámetros.
+
+---
+# DLNM
+
+.blue[**Relación lineal de exposición-respuesta**]:
+
+- Caso simple suponiendo `\(w(\ell)=c\)`,
+`$$s(x;t) = \sum_{\ell=\ell_0}^{\ell_1} x_{t-\ell} w(\ell) = \sum_{\ell=\ell_0}^{\ell_1} x_{t-\ell} c,$$`
+- `\(\boldsymbol{C}=\boldsymbol{1}\)` es un vector de dimensión `\((L-\ell_0+1)\)`.
+`$$s(x,t;\eta) = \boldsymbol{q}_{x,t} \boldsymbol{C} \boldsymbol{\eta} = \boldsymbol{q}_{x,t} \boldsymbol{1} \boldsymbol{\eta},$$`
+donde
+`\(\boldsymbol{q}_{x,t}=\left[ x_{t-\ell_0},...,x_{t-\ell_1}\right]^\top\)`  
+- Otros tipos de funciones base se pueden emplear (e.g. splines).
+
+---
+# DLNM
+.blue[**Relación no lineal de exposición-respuesta**]:
+
+- Considere:
+`$$s(x;t) = \int_{\ell_0}^{\ell_1} f(x_{x-\ell}) \cdot w(\ell)  d\ell \approx \sum_{\ell=\ell_0}^{\ell_1} f(x_{t-\ell}) \cdot w(\ell)$$`
+- El supuesto de la estructura anterior es que la función `\(f(x_{t-\ell}) w(\ell)\)` supone independencia entre `\(f(x)\)` y `\(w(\ell)\)`.
+- Se puede extender esta expresión usando:
+`$$s(x;t) = \int_{\ell_0}^{\ell_1} f \cdot w(x_{x-\ell}, \ell)  d\ell \approx \sum_{\ell=\ell_0}^{\ell_1} f \cdot w(x_{x-\ell}, \ell).$$`
+- De esta forma, la función bidimensional `\(f \cdot w(x_{x-\ell}, \ell)\)` es llamada .blue[la función de exposición-rezago-respuesta].
+
+
+---
+# Aplicación DLNM
+## Estudio de clima y mortalidad
+
+- Estudio de clima sobre la mortalidad diaria en Chicago de 1987 a 2000 usando covariables `\(\text{PM10}\)`, `\(\text{O}_3\)` y temperatura (Ejemplo del paquete `dlnm`).
+
+.pull-left[
+&lt;div class="figure"&gt;
+&lt;img src="figures/fucnion-exposicion-respuesta3D_A.png" alt="Función en 3D." width="80%" /&gt;
+&lt;p class="caption"&gt;Función en 3D.&lt;/p&gt;
+&lt;/div&gt;
+]
+
+.pull-right[
+&lt;div class="figure"&gt;
+&lt;img src="figures/fucnion-exposicion-respuesta3D_B.png" alt="Gráfico de contorno." width="70%" /&gt;
+&lt;p class="caption"&gt;Gráfico de contorno.&lt;/p&gt;
+&lt;/div&gt;
+]
+
+Función exposición-rezago-respuesta de temperatura sobre mortalidad (ref. 21C°)
+
+---
+# Aplicación DLNM
+## Estudio de clima y mortalidad
+
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+.pull-left[
+&lt;img src="figures/fucnion-exposicion-respuesta2D_A.png" width="80%" /&gt;
+]
+
+.pull-right[
+&lt;img src="figures/fucnion-exposicion-respuesta2D_B.png" width="80%" /&gt;
+]
+
+
+---
+# Tema 5: Aprendizaje de Máquinas
+
+---
+# Introducción
+
+- **Un poco sobre Ciencia de Datos.**
+
+- **Análisis exploratorio o visualización de datos.**
+
+- **Aprendizaje no supervisado.**
+
+- **Aprendizaje supervisado.**
+
+
+
+---
+# Ciencia de Datos
+
+- Actualmente, los términos de **Data Science** (Ciencia de Datos, CD) y **Big Data** son utilizados frecuentemente, como si fueran conceptos nuevos y distintos de lo que se trata estadística hace más de dos ciclos.
+
+- Basta solo buscarlos en *Google*.
+
+- En 1980s, en una conferencia en la Universidad de Michigan, USA, C.F. Jeff Wu ya había sugerido en usar *Statistical Data Science*, o simplemente *Data Science*, en lugar de Estadística para dar más visibilidad a los trabajos de los estadísticos.
+
+- Tuckey (1962, 1977) presentó el concepto del Análisis Exploratorio de Datos y recalcó la importancia de usar gráficos y tablas antes de realizar análisis inferencial. 
+
+---
+# Ciencia de Datos
+
+- Actualmente muchos centros de CD en universidades alrededor del mundo están en facultades, escuelas de Ingeniería, Bioestadística, Ciencia de Computación, Administración, Economía, etc. **(No en estadística!)**
+
+### Mitos
+
+1. Muchos estadísticos piensan que la estadística es la parte menos importante de CD. Sin embargo, Donoho (2017) resalta que si una de las principales característica de CD es analizar grandes volumenes de datos (Big data), hace más de 200 años los estadísticos han estado trabajando e investigando análisis y técnicas con grandes bases de datos (censos, colección de información meteorológicas, series financieras, etc.) que tienen esta característica.
+
+2. Otro mito es pensar que la Estadística (clásica y Bayesiana) trata solamente de pequeños volúmenes de datos (*small data*). Esto es debido a que muchos textos didácticos presentan bases de datos pequeños para presentar las metodologías que pueden ser replicados por los lectores con calculadoras y softwares en las computadoras.
+
+
+---
+# Ciencia de Datos
+
+**En resumen:** 
+
+- CD es una combinación de Estadística y de Ciencia de Computación.
+
+- Más el área de aplicación (negocios, genética, meteorología, etc.)
+
+- Esta perspectiva no es nueva: Tukey(1962): The future of Data Analysis, AMS.
+
+- Científicos y tomadores de decisión enfrentan bases de datos grandes: secuencia genética, base de datos de textos, datos astronómicos, datos financieros de alta frecuencia, redes sociales, etc.
+
+- **Métodos:** redes neuronales, máquinas de vector soporte, machine learning, deep learning, bosque aleatorio, etc.
+
+
+---
+# Perspectivas de CD
+
+1. Estadística
+2. Computación
+3. Humana
+
+#### 1. Perspectiva de Estadística
+
+- Estadística que consiste en recolección y análisis de datos, ayuda a la toma de decisión y explicación de los fenómenos en la Ciencia y en la Industria.
+
+- Datos tienen incertidumbre: sesgos de recolección, medición, etc.
+
+- Bases de datos son complicados: tipo de dependencia (temporal, espacial, etc.)
+
+- Datos de alta dimensión: registramos miles de variables para cada individuo de la muestra.
+
+---
+# Perspectivas de CD
+
+1. Estadística
+2. Computación
+3. Humana
+
+#### 2. Perspectiva de Computación
+
+- Importante en los datos contemporáneos: cálculos de los estimadores y la precisión de los estimadores tomando en cuenta los recursos computacionales (tiempo y memoria).
+
+- Optimización, bootstrap, MCMC, etc.
+
+- Distribución de bases de datos gigantes en múltiplos procesadores (velocidad) y múltiples equipos de almacenamiento (memoria).
+
+- Almacenamiento de datos y algoritmo eficiente de análisis.
+
+
+---
+# Perspectivas de CD
+
+1. Estadística
+2. Computación
+3. Humana
+
+#### 3. Perspectiva Humana
+
+- CD conecta modelos estadísticos y métodos computacionales para resolver problemas específicos de otras áreas.
+
+- Entender el dominio de un problema, decidir qué datos obtener, cómo procesarlos
+
+- Luego, explorar y visualizar los datos, seleccionar un modelo estadístico y métodos computacionales apropiados.
+
+- Finalmente comunicar los resultados del análisis.
+
+---
+# Aprendizaje estadístico
+
+- **Aprendizaje no supervisado**
+  - Dado un conjunto de `\(n\)` individuos con `\(p\)` características, el objetivo es identificar grupos de individuos homogéneos, de tal manera que los grupos sean más heterogéneos.
+  - Análisis de cluster jerárquico, método de k-médias, etc.
+  - *Variables input*: `\(X_i=(X_{i1},...,X_{ip})\)`,  
+para `\(i=1,...,n\)`.
+Agrupar `\(n\)` indivíduos en distintos grupos.
+
+- **Aprendizaje supervisado**
+  - Dado un conjunto de n individuos con `\(p\)` variables. Cada individuo tiene un atributo adicional.
+  - El objetivo es encontrar un modelo para predecir la clase o valor del atributo de un individuo si se conoce los valores de `\(p\)` variables.
+  - *Variables input* `\(X_i=(X_{i1},...,X_{ip})\)`,  
+  - *Variable output* `\(Y_{i}\)`, para `\(i=1,...,n\)`.
+
+---
+# Algunas técnicas
+
+- **Aprendizaje no supervisado**:
+  - Análisis de conglomerados jerárquicos.
+  - Métodos de k-medias.
+  - Análisis de componentes principales.
+  - Árbol de aislamiento.
+  - Bosque de aislamiento.
+  
+- **Aprendizaje supervisado**:
+  - Método de los k-vecinos más cercanos.
+  - Regresión (logística, lineal, no lineal, Ridge, LASSO, etc.)
+  - Árbol de decisión.
+  - Redes neuronales.
+  - Aprendizaje profundo.
+  - Máquinas vectoriales de soporte.
+  - Métodos de consenso (bosque aleatorio, métodos de impulso-Boosting)
+
+---
+# Algunas áreas de interés
+
+.pull-left[
+&lt;img src="figures/TSClustering.png" width="80%" /&gt;
+]
+
+.pull-right[
+Maharaj, E.A., D'Urso, P., &amp; Caiado, J. (2019). Time Series Clustering and Classification (1st ed.). Chapman and Hall/CRC. https://doi.org/10.1201/9780429058264
+]
+
+---
+# Ejemplos:
+
+
+- .blue[**Aprendizaje no supervisado**]
+  
+  - Garcia, Y. E., Chou-Chen, S. W., Barboza, L. A., Daza-Torres, M. L., Montesinos-Lopez, J. C., Vasquez, P., ... &amp; Sanchez, F. (2023). **Common patterns between dengue cases, climate, and local environmental variables in Costa Rica: A Wavelet Approach.** arXiv preprint arXiv:2301.02286.
+  
+  
+
+- .blue[**Aprendizaje supervisado**]
+
+  - Barboza LA, Chou-Chen SW, Vásquez P, García YE, Calvo JG, et al. (2023) **Assessing dengue fever risk in Costa Rica by using climate variables and machine learning techniques.** PLOS Neglected Tropical Diseases 17(1): e0011047. https://doi.org/10.1371/journal.pntd.0011047
+
+  - Chou-Chen, S. W., Barboza, L. A., Vásquez, P., García, Y. E., Calvo, J. G., Hidalgo, H. G., &amp; Sanchez, F. (2023). **Bayesian spatio-temporal model with INLA for dengue fever risk prediction in Costa Rica.** arXiv preprint arXiv:2302.06747.
+
+---
+# Calibración y Selección de modelos
+
+- Remuestreo (Bootstraping)
+- Validación cruzada (cross-validation)
+- Calibración de los parámetros de modelos
+- Selección de los modelos más adecuados
+
+
+---
+# Dengue de 32 cantones en CR.	
+
+- Casos mensuales sospechosos y confirmados clínicamente de fiebre del dengue en Costa Rica desde el año 2000 hasta 2021, en 32 cantones.
+- **Cálculos de precipitación diaria** ( `\(P_{i,t}\)` ): obtenido de datos de Climate Hazards Group InfraRed Precipitation with Station data (CHIRPS).
+- **Anomalía de la temperatura de la superficie del mar ENSO** ( `\(S_{i,t}\)` ): obtenido del Climate Prediction Center (CPC), National Oceanographic and Atmospheric Administration (NOAA).
+- **Índice de Vegetación de Diferencia Normalizada (NDVI)** ( `\(N_{i,t}\)` ): obtenido del Moderate Resolution Imaging Spectroradiometer (MODIS).
+- **Temperatura de la superficie terrestre durante el día** ( `\(L_{i,t}\)` ): obtenida de MODIS.
+- **Índice Tropical del Atlántico Norte** ( `\(TN_{i,t}\)` ): obtenido de NOAA.
+		
+
+---
+# Dengue de 32 cantones en CR	
+
+- Para cada cantón fijo `\(i, i=1,...,32\)`, dividimos el conjunto de datos en:
+
+  - .blue[**Período de calibración**]: de enero de 2000 a diciembre de 2020.
+  - .blue[**Período de prueba**]: de enero de 2021 a marzo de 2021.
+  
+- Incorporación de las asociaciones históricas retrasadas de las covariables climáticas aplicando un marco de modelo no lineal de retardo distribuido (DLNM) (Gasparrini, 2010; Gasparrini et al., 2014).
+
+
+---
+# Dengue de 32 cantones en CR	
+### Entrenamiento
+
+La estructura de los modelos en términos de la variable dependiente y las covariables para un cantón `\(i\)` es la siguiente:
+`$$RR_t \sim f(RR_{t-1},C_1P_t, C_2S_t, C_3N_t, C_4L_t, C_5TN_t,M_t)$$`
+donde   
+`\(f\)` es una función que depende del método (GAMLSS o RF), \newline
+las matrices `\(C_i\)` se definen en términos de la representación DLNM, y  
+`\(M_t\)` es una variable de tipo factor que describe el efecto fijo mensual.
+
+---
+# Dengue de 32 cantones en CR	
+
+**GAMLSS:**
+
+`$$RR_t \overset{ind}{\sim} \mathcal{D}(\mu,\sigma,\nu)$$`
+`$$\begin{align}g_1(\mu) &amp;= \beta_{10}+\beta_{11}RR_{t-1}+\beta_{12}C_1P_t+ \beta_{13}C_2S_t \\
+&amp;+\beta_{14}C_3N_t+\beta_{15}C_4L_t+\beta_{16}C_5TN_t+\beta_{17} M_t \\
+g_2(\sigma)&amp;=\beta_{20}\\
+g_3(\nu)&amp;=\beta_{30}
+\end{align}$$`
+
+donde `\(\mathcal{D}\)` es la distribución gamma ajustada a cero (ZAGA):
+		`$$f_Y(y)=\left\lbrace \begin{align}
+		\nu, &amp; ~~~~~\text{si  }y=0;\\
+		(1-\nu)f_W(y), &amp;~~~~~~ \text{    si    } 0&lt;y&lt;\infty.\end{align} \right.$$`
+		
+para `\(0 \leq y &lt; \infty\)`, donde `\(W \sim GA(\mu,\sigma)\)` es la distribución gamma con `\(0&lt;\mu&lt;\infty\)`, `\(0&lt;\sigma&lt;\infty\)` y `\(0&lt;\nu&lt;1\)`.
+		
+**Bosque aleatorio**: Un método de conjunto que consiste en una gran cantidad de árboles de decisión.
+		
+---
+# Dengue de 32 cantones en CR	
+
+- El problema con este método es que se necesitan las covariables medidas en el futuro.
+
+- Se utiliza el modelo (VAR) para cada cantón para predecir las covariables climáticas en el período de prueba, ya que las covariables climáticas utilizadas en este estudio están altamente correlacionadas.
+
+- Estas predicciones climáticas, junto con los riesgos relativos predichos, se utilizan para proporcionar pronósticos de la variable dependiente durante el período de prueba.
+
+
+---
+# Dengue de 32 cantones en CR	
+
+**Raíz de error cuadrático medio normalizado**:
+`$$	NRMSE = \sqrt{\frac{1}{m\overline{ RR}}\sum_{t=1}^m(RR_t-\widehat {RR}_t)^2}$$`
+**Puntuación de intervalo (interval Score) normalizado**
+`$$NIS_{\alpha}=\frac{1}{m\overline{RR}} \sum_{t=1}^m\left[(U_t-L_t)+\frac{2}{1-\alpha}(L_t-RR_t)\cdot 1_{RR_t&lt;L_t} \right.$$`
+`$$+ \left. \frac{2}{1-\alpha}(RR_t-U_t)\cdot 1_{RR_t&gt;U_t}\right],$$`
+
+---
+# Dengue de 32 cantones en CR	
+
+
+&lt;img src="figures/dengue_predict1/DLNM.png" width="100%" style="display: block; margin: auto;" /&gt;
+		
+
+---
+# Dengue de 32 cantones en CR	
+
+&lt;img src="figures/dengue_predict1/tabla2.png" width="80%" style="display: block; margin: auto;" /&gt;
+		
+
+
+---
+# Dengue de 32 cantones en CR	
+
+&lt;img src="figures/dengue_predict1/tabla3.png" width="80%" style="display: block; margin: auto;" /&gt;
+		
+
+
+---
+# Dengue de 32 cantones en CR	
+
+&lt;img src="figures/dengue_predict1/NIS_caja.png" width="80%" style="display: block; margin: auto;" /&gt;
+		
+
+---
+# Dengue de 32 cantones en CR	
+
+&lt;img src="figures/dengue_predict1/training.png" width="80%" style="display: block; margin: auto;" /&gt;
+		
+---
+# Dengue de 32 cantones en CR	
+
+&lt;img src="figures/dengue_predict1/testing.png" width="80%" style="display: block; margin: auto;" /&gt;
+		
+
+		
+---
+# Tema 6: Análisis espacial y espacio-temporales.
+
+---
+# Introducción
+
+.pull-left[
+
+Moraga, Paula. (2019). Geospatial Health Data: Modeling and Visualization with R-INLA and Shiny. Chapman &amp; Hall/CRC Biostatistics Series
+
+https://www.paulamoraga.com/book-geospatial/index.html
+
+]
+
+.pull-right[
+&lt;img src="figures/geo_spatial_health.jpg" width="80%" /&gt;
+]
+
+---
+# Tipos de datos espaciales
+
+- Sea `\(\left\lbrace Y(s): s \in D \right\rbrace\)`, donde `\(D \subset \mathbb{R}^d\)`. Generalmente, `\(d=2\)`
+
+1. **Análisis de patrones de puntos**
+
+2. **Análisis de datos geoestadísticos**
+
+3. **Análisis de datos de área** 
+  
+  
+  
+---
+# Tipos de datos espaciales
+
+- .blue[**Análisis de patrones de puntos:**] 
+  - Consiste en un conjunto de datos en donde las unidades estadísticas son puntos que están ubicados geográficamente. 
+  - Aparición de acuerdo a un mecanismo aleatorio de `\(Y(s)\)` en el espacio `\(D\)`. 
+- Ejemplo: La localización de 1854 brotes de cólera en Londres, 1854.
+&lt;img src="Clase02_files/figure-html/unnamed-chunk-24-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+
+
+---
+# Tipos de datos espaciales
+
+- .blue[**Análisis de datos geoestadísticos:**] 
+  - La distribución espacial de una característica sobre el espacio continuo del estudio. 
+  - `\(s\)` varía continuamente en el espacio `\(D\)`. 
+- Ejemplo: Datos de precipitación de 143 estaciones durante mayo y junio en el estado de Paraná, Brasil.
+&lt;img src="Clase02_files/figure-html/unnamed-chunk-25-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+   	
+---
+# Tipos de datos espaciales
+
+- .blue[**Análisis de datos de área:**] 
+  - Es el análisis de datos asociados a zonas geográficas. 
+  - `\(D\)` es fijo y discreto. Generalmente, se refieren a zonas geográficas (provincias, cantones, municipios, etc.).
+- Ejemplo: Muertes infantiles de los municipios de Carolina del Norte, USA, 1974.  
+&lt;img src="Clase02_files/figure-html/unnamed-chunk-26-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+
+---
+# INLA
+
+- Aproximaciones de Laplace anidadas integración (INLA, Integrated nested Laplace approximations).
+
+- Aproximación de la inferencia Bayesiana en modelos Gaussianos latentes, que incluye modelos lineales generalizados mixtos y modelos espaciales y espacio-temporales.
+
+- El modelo toma la forma:
+`$$y_i \mid \boldsymbol{x}, \boldsymbol{\theta} \sim \pi\left(y_i \mid x_i, \boldsymbol{\theta}\right), i=1, \ldots, n,$$`
+`$$\boldsymbol{x} \mid \boldsymbol{\theta} \sim N\left(\boldsymbol{\mu}(\boldsymbol{\theta}), \boldsymbol{Q}(\boldsymbol{\theta})^{-1}\right),$$`
+`$$\boldsymbol{\theta} \sim \pi(\boldsymbol{\theta})$$`
+donde:    
+`\(y\)` son los datos observados,   
+`\(x\)` representa un campo Gaussiano, y   
+`\(\theta\)` son los hiperparámetros.   
+`\(\mu(\theta)\)` es la media y `\(Q(\theta)\)` es la matriz de precisión del campo Gaussiano latente `\(x\)`. 
+ 			
+
+---
+# INLA
+
+- INLA usa una combinación de aproximaciones analíticas e integración numérica para aproximar la distribución a posteriori de los parámetros.
+- Computacionalmente es muy eficiente (comparado con otros métodos computacionales como MCMC, Gibbs).
+
+- Ilustración con dos trabajos:
+
+1. .blue[**Datos de áreas:**]
+
+  - Chou-Chen, S. W., Barboza, L. A., Vásquez, P., García, Y. E., Calvo, J. G., Hidalgo, H. G., &amp; Sanchez, F. (2023). **Bayesian spatio-temporal model with INLA for dengue fever risk prediction in Costa Rica**. arXiv preprint arXiv:2302.06747.
+
+2. .blue[**Análisis de datos geoestadísticos:**]
+  - Barboza, L. A., Chou-Chen, S. W., &amp; Córdoba, M. A. (en prensa). **Spatio-temporal Downscaling Emulator for Regional Climate Models: a Comparative Study**. Environmetrics.
+
+---
+# Análisis con datos de área
+
+## Definición de matrices de vecinos o proximidad
+
+- Para incorporar el efecto espacial, se define la matriz de proximidad `\(\boldsymbol{W}\)`:
+1. **La matriz de vecinos**: se define como `\(\boldsymbol{W}= \boldsymbol{\left\lbrace W\right\rbrace}_{ij} = 1\)` si los municipios `\(i\)` y `\(j\)` son vecinos y `\(0\)` en caso contrario.
+2. **Otras matriz de distancia alternativa**: basada en la distancia entre el centro de cada par de municipios, es decir, `\(\boldsymbol{W} = \boldsymbol{\left\lbrace W\right\rbrace_{ij}} = 1\)` si la distancia es menor que `\(x~km\)` y `\(0\)` en caso contrario.
+- Note que en este caso, la proximidad es el inverso de la distancia entre dos zonas geográficas.
+
+---
+# Análisis con datos de área
+
+
+- Una forma de incorporar el efecto espacial es el modelo **autorregresivo condicional instrínseco (CAR)**:
+
+`$$\theta_{i}|\theta_{-i} \sim N\left( \frac{1}{n_i} \sum_{j \sim i} \theta_{j}, \frac{1}{n_{i}}  \right),$$`
+donde `\(j\sim i\)` denota que `\(\boldsymbol{W}_{ij} = 1\)` para un municipio `\(i\)`, y `\(n_i\)` es el número de vecinos según la definición de la matriz de proximidad.
+
+---
+# Dengue de 32 cantones en Costa Rica.	
+
+- Casos mensuales sospechosos y confirmados clínicamente de fiebre del dengue en Costa Rica desde el año 2000 hasta 2021, en 32 cantones.
+- **Cálculos de precipitación diaria** ( `\(P_{i,t}\)` ): obtenido de datos de Climate Hazards Group InfraRed Precipitation with Station data (CHIRPS).
+- **Anomalía de la temperatura de la superficie del mar ENSO** ( `\(S_{i,t}\)` ): obtenido del Climate Prediction Center (CPC), National Oceanographic and Atmospheric Administration (NOAA).
+- **Índice de Vegetación de Diferencia Normalizada (NDVI)** ( `\(N_{i,t}\)` ): obtenido del Moderate Resolution Imaging Spectroradiometer (MODIS).
+- **Temperatura de la superficie terrestre durante el día** ( `\(L_{i,t}\)` ): obtenida de MODIS.
+- **Índice Tropical del Atlántico Norte** ( `\(TN_{i,t}\)` ): obtenido de NOAA.
+		
+---
+# Dengue de 32 cantones en Costa Rica.	
+
+Para cada cantón `\(i\)` y el tiempo `\(t\)`:
+`$$Y_{it} | \mu_{it}, \kappa \sim NegBin (\mu_{it}, \kappa)$$`
+donde
+	
+`$$\log(\mu_{it})= \log(E_{it})+ \log (RR_{it})$$`
+`$$\log RR_{it}=\alpha + f_1(RR_{t})+f_2(P_t)+ f_3(S_t)$$`
+`$$+ f_4(N_t)+ f_5(L_t)+f_6(TN_t)+ f_7(M_t)$$`
+`$$+\phi_{i,(month)} + \theta_{i,(year)},$$`
+
+	
+`\(\phi_{i,(month)}-\phi_{i,(month-1)} \sim N(0,\sigma^2_\phi),\)`
+	y 
+	
+`\(f_k,k=1,...,7\)` es la estructura de DLNM aplicada desde el rezago `\(3\)` hasta el `\(12\)`.		
+		
+		
+---
+# Dengue de 32 cantones en Costa Rica.			
+		
+		
+- Para incorporar el efecto espacial, se define la matriz de proximidad `\(\boldsymbol{W}\)`:
+1. **La matriz de vecinos**: se define como `\(\boldsymbol{W}= \boldsymbol{\left\lbrace W\right\rbrace}_{ij} = 1\)` si los municipios `\(i\)` y `\(j\)` son vecinos y `\(0\)` en caso contrario.
+2. **Otras matriz de distancia alternativa**: basada en la distancia de la carretera principal en kilómetros entre el centro de cada par de municipios, es decir, `\(\boldsymbol{W} = \boldsymbol{\left\lbrace W\right\rbrace_{ij}} = 1\)` si la distancia es menor que la mediana general y `\(0\)` en caso contrario. Incorporamos esta distancia para proporcionar una forma más realista de medir la proximidad entre las dinámicas sociales.
+
+- En resumen, 4 estructuras espaciales fueron implementadas:
+  - Independencia.
+  - CAR.
+  - CAR propia: agregando un valor positivo `\(d\)` a `\(n_i\)`.
+  - Besag-York-Mollie (BYM): incluye el efecto aleatorio no estructurado.
+
+---
+# Dengue de 32 cantones en Costa Rica.			
+
+- **Raíz de error cuadrático medio normalizado `\((NRMSE)\)`**
+
+`$$NRMSE = \sqrt{\frac{1}{m\overline{ RR}}\sum_{t=1}^m(RR_t-\widehat {RR}_t)^2}$$`
+			
+- **Puntuación de intervalo (interval Score) normalizado** `\((NIS_{\alpha})\)` con `\(\alpha\)`:
+
+`$$NIS_{\alpha}=\frac{1}{m\overline{RR}} \sum_{t=1}^m\left[(U_t-L_t)+\frac{2}{1-\alpha}(L_t-RR_t)\cdot 1_{RR_t&lt;L_t} \right.$$`
+`$$+ \left. \frac{2}{1-\alpha}(RR_t-U_t)\cdot 1_{RR_t&gt;U_t}\right],$$`
+
+
+---
+# Dengue de 32 cantones en Costa Rica.			
+
+
+&lt;img src="figures/inla/cuadro1.jpg" width="100%" /&gt;
+
+---
+# Dengue de 32 cantones en Costa Rica.			
+
+
+&lt;img src="figures/inla/cuadro2.jpg" width="100%" /&gt;
+
+---
+# Dengue de 32 cantones en Costa Rica.			
+
+
+&lt;img src="figures/inla/cuadro3.jpg" width="100%" /&gt;
+
+---
+# Dengue de 32 cantones en Costa Rica.			
+
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="figures/inla/month.effect.canton.jpg" alt="Media posterior y intervalo creíble del 95% de los efectos aleatorios mensuales de cada cantón." width="55%" /&gt;
+&lt;p class="caption"&gt;Media posterior y intervalo creíble del 95% de los efectos aleatorios mensuales de cada cantón.&lt;/p&gt;
+&lt;/div&gt;
+
+
+---
+# Dengue de 32 cantones en Costa Rica.			
+
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="figures/inla/month.map.jpg" alt="Ilustración de 8 grupos con un comportamiento temporal similar." width="60%" /&gt;
+&lt;p class="caption"&gt;Ilustración de 8 grupos con un comportamiento temporal similar.&lt;/p&gt;
+&lt;/div&gt;
+
+
+
+---
+# Dengue de 32 cantones en Costa Rica.			
+
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="figures/inla/canton.effect.jpg" alt="Contribución del efecto aleatorio espacial de cada año al log riesgo relativo del dengue." width="60%" /&gt;
+&lt;p class="caption"&gt;Contribución del efecto aleatorio espacial de cada año al log riesgo relativo del dengue.&lt;/p&gt;
+&lt;/div&gt;
+
+
+
+---
+# Dengue de 32 cantones en Costa Rica.			
+
+**Períodos de entrenamiento**
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="figures/inla/prediction.RR.in.jpg" alt="Comparación durante el período de ajuste. Los seis paneles superiores muestran los mejores cantones según la métrica NIS. Los tres paneles inferiores muestran los peores cantones según la métrica NIS. La línea roja representa el RR observado, mientras que la línea azul representa el RR estimado." width="60%" /&gt;
+&lt;p class="caption"&gt;Comparación durante el período de ajuste. Los seis paneles superiores muestran los mejores cantones según la métrica NIS. Los tres paneles inferiores muestran los peores cantones según la métrica NIS. La línea roja representa el RR observado, mientras que la línea azul representa el RR estimado.&lt;/p&gt;
+&lt;/div&gt;
+
+---
+# Dengue de 32 cantones en Costa Rica.			
+
+**Períodos de entrenamiento**
+
+.pull-left[
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="figures/inla/prediction.map.RR.in.2002.jpg" alt="Media posterior de los RR" width="100%" /&gt;
+&lt;p class="caption"&gt;Media posterior de los RR&lt;/p&gt;
+&lt;/div&gt;
+
+
+]
+
+.pull-right[
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="figures/inla/dif.map.RR.in.2002.jpg" alt="Error porcentual absoluto." width="100%" /&gt;
+&lt;p class="caption"&gt;Error porcentual absoluto.&lt;/p&gt;
+&lt;/div&gt;
+]
+Media posterior de los riesgos relativos de enero a diciembre de 2002 en CR.
+
+
+---
+# Dengue de 32 cantones en Costa Rica.			
+
+**Períodos de entrenamiento**
+
+.pull-left[
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="figures/inla/prediction.map.RR.in.2011.jpg" alt="Media posterior de los RR" width="100%" /&gt;
+&lt;p class="caption"&gt;Media posterior de los RR&lt;/p&gt;
+&lt;/div&gt;
+
+
+]
+
+.pull-right[
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="figures/inla/dif.map.RR.in.2011.jpg" alt="Error porcentual absoluto." width="100%" /&gt;
+&lt;p class="caption"&gt;Error porcentual absoluto.&lt;/p&gt;
+&lt;/div&gt;
+]
+Media posterior de los riesgos relativos de enero a diciembre de 2011 en CR.
+
+
+---
+# Dengue de 32 cantones en Costa Rica.			
+
+**Períodos de entrenamiento**
+
+.pull-left[
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="figures/inla/prediction.map.RR.in.2020.jpg" alt="Media posterior de los RR" width="100%" /&gt;
+&lt;p class="caption"&gt;Media posterior de los RR&lt;/p&gt;
+&lt;/div&gt;
+
+
+]
+
+.pull-right[
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="figures/inla/dif.map.RR.in.2020.jpg" alt="Error porcentual absoluto." width="100%" /&gt;
+&lt;p class="caption"&gt;Error porcentual absoluto.&lt;/p&gt;
+&lt;/div&gt;
+]
+Media posterior de los riesgos relativos de enero a diciembre de 2020 en CR.
+
+
+
+---
+# Dengue de 32 cantones en Costa Rica.			
+
+**Períodos de Prueba**
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="figures/inla/prediction.RR.out.jpg" alt="Comparación de pronósticos durante el período de prueba (2021). Los seis paneles superiores muestran los mejores cantones según la métrica NIS. Los tres paneles inferiores muestran los peores cantones según la métrica NIS." width="60%" /&gt;
+&lt;p class="caption"&gt;Comparación de pronósticos durante el período de prueba (2021). Los seis paneles superiores muestran los mejores cantones según la métrica NIS. Los tres paneles inferiores muestran los peores cantones según la métrica NIS.&lt;/p&gt;
+&lt;/div&gt;
+
+
+---
+# Dengue de 32 cantones en Costa Rica.			
+
+.pull-left[
+&lt;div class="figure"&gt;
+&lt;img src="figures/inla/prediction.map.RR.out.jpg" alt="RR." width="100%" /&gt;
+&lt;p class="caption"&gt;RR.&lt;/p&gt;
+&lt;/div&gt;
+
+
+]
+
+.pull-right[
+&lt;div class="figure"&gt;
+&lt;img src="figures/inla/dif.map.RR.out.jpg" alt="Error porcentual absoluto." width="100%" /&gt;
+&lt;p class="caption"&gt;Error porcentual absoluto.&lt;/p&gt;
+&lt;/div&gt;
+]
+
+Predicción del riesgo relativo y su error porcentual absoluto desde enero hasta marzo de 2021.
+
+---
+# Análisis de datos geoestadístico:
+
+- Suponga que `\(Y(s_1),...,Y(s_n)\)` son observaciones de un proceso estocástico:
+ `$$\left\lbrace Y(s): s \in D \right\rbrace,$$`  
+donde `\(D \subset \mathbb{R}^2\)` y `\(s\)` varía continuamente en `\(D\)`.
+
+- Sea un proceso estocástico `\(Y(s)\)`, se dice que es estacionario de segundo orden si para cualquier `\(s_i\)` y cualquier `\(h \in \mathbb{R}^2\)`, se tiene que:
+
+- `\(E[Y(\boldsymbol{s})]=\mu, \forall \boldsymbol{s} \in D\)`
+
+- `\(\operatorname{Cov}(Y(\boldsymbol{s}), Y(\boldsymbol{s}+\boldsymbol{h}))=C(\boldsymbol{h}), \forall \boldsymbol{s} \in D, \forall \boldsymbol{h} \in \mathbb{R}^2\)`
+
+
+---
+# Análisis de datos geoestadístico:
+
+La función de covariancia exponencial es una función muy usada para la función de covariancia:
+`$$\operatorname{Cov}\left(Y\left(\boldsymbol{s}_i\right), Y\left(\boldsymbol{s}_j\right)\right)=\sigma^2 \exp \left(-\kappa\left\|\boldsymbol{s}_i-\boldsymbol{s}_j\right\|\right)$$`
+donde `\(\left\|\boldsymbol{s}_i-\boldsymbol{s}_j\right\|\)` es la distancia entre ubicaciones `\(\boldsymbol{s}_i\)` y `\(\boldsymbol{s}_j\)`, y `\(\sigma^2\)` denota la varianza del campo espacial, y el parámetro `\(\kappa\)` controla qué tan rápido decae la correlación con la distancia.
+
+
+---
+# Análisis de datos geoestadístico:
+
+- Una clase flexible de función de covariancia muy utilizada es la familia Matérn:
+`$$\operatorname{Cov}\left(Y\left(\boldsymbol{s}_i\right), Y\left(\boldsymbol{s}_j\right)\right)=\frac{\sigma^2}{2^{\nu-1} \Gamma(\nu)}\left(\kappa\left\|\boldsymbol{s}_i-\boldsymbol{s}_j\right\|\right)^\nu K_\nu\left(\kappa\left\|\boldsymbol{s}_i-\boldsymbol{s}_j\right\|\right),$$`
+donde `\(\sigma^2\)` es la varianza marginal del campo espacial, y
+`\(K_\nu (\cdot)\)` es la función de Bessel modificada de segundo tipo y de orden `\(\nu&gt;0\)`, y `\(\kappa\)` es el rango.
+- Note que con `\(\nu=1/2\)`, se tiene la exponencial.
+
+&lt;img src="Clase02_files/figure-html/unnamed-chunk-43-1.png" width="40%" style="display: block; margin: auto;" /&gt;
+
+
+
+---
+# Emulador estadístico
+
+- **Modelos Climáticos Regionales (RCM)**: describen la dinámica atmosférica y oceánica global. Modelos de reducción de escala que utilizan como entrada **un Modelo de Circulación General (GCM)**.
+- Evaluación de los impactos del cambio climático y predicciones estacionales.
+- Demanda computacional alta. (Wilby y Wigley, 1997)
+- **Emulador estadístico**: aproximación de reducción de escala de la salida de RCM. 
+- **El objetivo** es: construir un emulador estadístico de reducción de escala de un modelo RCM, utilizando un enfoque espacio-temporal de coeficientes variables.
+
+&lt;img src="figures/emulador/RCM_region.jpg" width="60%" style="display: block; margin: auto;" /&gt;
+
+
+---
+# Aplicación
+
+- North American Regional Climate Change Assessment Program (NARCCAP) (NARCCAP).
+- Generación de escenarios climáticos para su uso en investigación de impactos.
+- **RCM:** Modelo Climático Regional Canadiense (CRCM):
+  - Temperatura (grados Kelvin)
+- **GCM:** Modelo de Sistema Climático Comunitario (CCSM):
+  - Temperatura (grados Kelvin)
+  - Velocidad vertical media de la presión estacional (PA/s) (OMEGA).
+- **Datos observados:** Registros de temperatura del aire en superficie observados del the National Climatic Data Center (NCDC). Base de datos llamada como DSI-3200.
+- Diferentes resoluciones espaciales. Resolución temporal común.
+
+
+---
+# Emulador estadístico
+
+&lt;img src="figures/emulador/resolution3.png" width="60%" style="display: block; margin: auto;" /&gt;
+- RCM (puntos rojos), GCM en la Región de América del Norte (puntos negros) y temperaturas observadas (puntos azules).
+- Intersección entre el dominio de NARCCAP (Norteamérica) y el área de Monzón. Estudios futuros sobre el impacto del Monzón sobre América Central.
+- 2482 puntos (RCM), 270 (GCM). Mensual en el tiempo.
+
+---
+# Aplicación
+
+- Sea `\(C_t(s),  s \in \mathcal S\)` la variable observada del Modelo Global y `\(C_t(w),  w \in \mathcal W\)` la variable observada del Modelo Regional.
+- Comportamiento de `\(Y_t(s) = \ln C_t(s)-\ln C_t(w)\)`
+
+&lt;img src="figures/emulador/promedios.png" width="90%" style="display: block; margin: auto;" /&gt;
+
+
+---
+# Emulador estadístico
+
+- Dos conjuntos espaciales: `\(\mathcal S\)` (más grueso) y `\(\mathcal W\)` (más fino).
+- Rejillas regulares en ambos conjuntos.
+- Cada ubicación `\(s\in \mathcal S\)` es el centro de una región regular que contiene varios puntos sobre `\(\mathcal W\)`.
+
+&lt;img src="figures/emulador/diagrama.png" width="90%" style="display: block; margin: auto;" /&gt;
+
+---
+# Emulador estadístico
+
+- Modelo Global:
+
+`$$C_t(s)=\alpha+\beta' X_t(s)+\epsilon_t(s)$$`
+		
+`\(\alpha\)` y `\(\beta\)` son parámetros aleatorios y `\(\epsilon_t(s)\)` es ruido blanco en espacio y tiempo.
+- Modelo Regional:
+
+`$$C_t(w)=[\alpha+\alpha_t^r(w)]+[\beta+\beta_t^r(w)]'X_t(s)+[\epsilon_t(s)+\gamma_t(w)]$$`
+donde   
+`\(\alpha_{\cdot}^r(\cdot)\sim N(\beta_0,\Sigma_0(\theta_0))\)`,  
+`\(\beta_{\cdot}^r(\cdot)\sim N(\beta_1,\Sigma_1(\theta_1))\)` y  
+`\(\gamma_t(\cdot)\stackrel{i.i.d}{\sim} N(0,\tau^2)\)`  
+y `\(\Sigma_0\)` y `\(\Sigma_1\)` son matrices de covariancia espacio-temporal separable.
+		
+---
+# Emulador estadístico
+
+- Modelo espacio-temporal de coeficientes variables:
+`$$Y_t(w):=C_t(w)-C_t(s)=\alpha_t^r(w)+\beta_t^r(w)'X_t(s)+\gamma_t(w)$$`
+- Enfoque bayesiano:
+`$$\mathbf Y|\Phi \sim N(\beta_0+\mathbf X^T\beta_1,\Sigma_Y)$$`
+- Evaluación del inverso y determinante de `\(\Sigma_Y\)` (que consume mucho tiempo). Consideraremos dos métodos de aproximación para evitar este problema.
+
+
+---
+# Emulador estadístico
+### Métodos de aproximación.
+
+- **Integrated Nested Laplace Approximation (*INLA)* **
+	- Aproximación Gaussiana de la verosimilitud bajo modelos más generales (modelos lineales generalizados con variables latentes). (Rue et al, 2009; Blangiardo et al, 2013.)
+	- Diseñado para reducir el tiempo de cálculo de modelos espaciales y/o temporales.
+
+
+---
+# Emulador estadístico: modelos
+
+**Modelo 0:** intercepto constante.  
+**Modelo 1:** Intercepto espaciotemporal variable que sigue un proceso aleatorio de ruido con la estructura de covarianza espacial sigue una  `\(\operatorname{Matern}(\nu=1)\)`.
+`$$\left\lbrace  \begin{align}
+Y_t(w)&amp;=\alpha_t(w)+\gamma_t(w)\\
+\alpha_t(w)&amp;= \epsilon_t(w)
+\end{align} \right.$$`
+
+**Modelo 2:** Intercepto espaciotemporal variable que sigue un proceso `\(AR(1)\)`, donde la estructura de covarianza espacial sigue una `\(\operatorname{Matern}(\nu=1)\)`.
+`$$\left\lbrace  \begin{align}
+				Y_t(w)&amp;=\alpha_t(w)+\gamma_t(w)\\
+				\alpha_t(w)&amp;= \rho \alpha_{t-1}(w)+\epsilon_t(w)
+\end{align} \right.$$`
+
+**Modelo 3:** Intercepto espaciotemporal variable que sigue un proceso `\(AR(1)\)` con la estructura de covarianza espacial sigue una Matern con una covariable (tasa de ascenso vertical de las parcelas de aire):
+`$$\left\lbrace  \begin{align}
+				Y_t(w)&amp;=\alpha_t(w)+\beta \cdot OMEGA_t(w)+\gamma_t(w)\\
+				\alpha_t(w)&amp;= \rho \alpha_{t-1}(w)+\epsilon_t(w)
+\end{align} \right.$$`
+
+---
+# Emulador estadístico
+
+
+&lt;img src="figures/emulador/tabla_predictiva.png" width="90%" style="display: block; margin: auto;" /&gt;
+
+
+---
+# Emulador estadístico
+
+&lt;img src="figures/emulador/grafico_Obs.png" width="70%" style="display: block; margin: auto;" /&gt;
+
+Paneles superiores: temperaturas estimadas según el Modelo 1 (emulador), temperaturas observadas y RCM. Panel inferior: rango intercuartil para cuatro meses seleccionados durante el período de prueba. Los valores faltantes se muestran en gris.}
+
+
+---
+# Referencia
+
+
+
+
+Gasparrini, A. (2011). "Distributed lag linear and non-linear models in
+R: the package dlnm". In: _Journal of Statistical Software_ 43.8, pp.
+1-20. URL:
+[https://www.jstatsoft.org/v43/i08/](https://www.jstatsoft.org/v43/i08/).
+
+Hastie, T., R. Tibshirani, and J. Friedman (2009). _The Elements of
+Statistical Learning: Data Mining, Inference and Prediction._
+Springer-Verlag.
+
+Morettin, P. A. and J. M. Singer (2017). _Estatistica e Ciência de
+Dados_. Blucher.
+
+Stasinopoulos, M., R. Rigby, G. Heller, et al. (2017). _Flexible
+Regression and Smoothing: Using GAMLSS in R_. Chapman &amp; Hall/CRC The R
+Series. CRC Press. ISBN: 9781351980388. URL:
+[https://books.google.co.cr/books?id=EDoPEAAAQBAJ](https://books.google.co.cr/books?id=EDoPEAAAQBAJ).
+
+Wood, S. N. (2017). _Generalized Additive Models: an Introduction with
+R, Second Edition_. Chapman and Hall/CRC.
+
+
+
+---
+class: center
+
+
+&lt;style type="text/css"&gt;
+.link-style1 a {
+  color: blue;
+  text-decoration: underline;
+}
+
+.link-style2 a {
+ color: blue;
+}
+
+&lt;/style&gt;
+
+
+## ¡Muchas gracias por su atención!
+
+### **correo**: .link-style1[[shuwei.chou@ucr.ac.cr](shuwei.chou@ucr.ac.cr)]
+
+### **Mi página personal**: .link-style2[[https://shuwei325.github.io](https://shuwei325.github.io)]
+  
+    
+    
+    
+
+.pull-left[
+&lt;img src="figures/estadistica3.png" width="100%" /&gt;
+
+
+]
+
+.pull-right[
+
+&lt;img src="figures/cimpa_logo.png" width="100%" /&gt;
+]
+
+Slides created via the R package [**xaringan**](https://github.com/yihui/xaringan).
+
+The chakra comes from [remark.js](https://remarkjs.com), [**knitr**](https://yihui.org/knitr/), and [R Markdown](https://rmarkdown.rstudio.com).
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create();
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
